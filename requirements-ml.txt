@@ -1,0 +1,35 @@
+# Machine Learning Requirements for Library Management System
+
+# Core TensorFlow (CPU version for compatibility)
+tensorflow==2.15.0
+
+# Alternative TensorFlow installations for different platforms:
+# For Apple Silicon Macs:
+# tensorflow-macos==2.15.0
+# For GPU acceleration (if CUDA available):
+# tensorflow-gpu==2.15.0
+
+# Data processing and analysis
+numpy>=1.21.0
+pandas>=1.3.0
+
+# Visualization
+matplotlib>=3.5.0
+seaborn>=0.11.0
+
+# Machine Learning utilities
+scikit-learn>=1.0.0
+
+# Web framework extensions
+Flask>=2.0.0
+Flask-CORS>=3.0.0
+
+# API utilities
+requests>=2.25.0
+
+# Development and testing
+pytest>=6.2.0
+pytest-cov>=2.12.0
+
+# Note: The system includes mock TensorFlow implementations
+# that work without installing actual TensorFlow for compatibility
