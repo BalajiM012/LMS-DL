@@ -1,0 +1,295 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Sign Up - Library Management System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #333;
+      }
+
+      .signup-container {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        padding: 60px;
+        max-width: 500px;
+        width: 90%;
+        text-align: center;
+        animation: fadeIn 0.8s ease-in-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+          transform: translateY(-30px);
+        }
+        to {
+          opacity: 1;
+          transform: translateY(0);
+        }
+      }
+
+      .welcome-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+      }
+
+      .lms-full-name {
+        font-size: 1.2rem;
+        color: #666;
+        margin-bottom: 40px;
+        font-weight: 500;
+      }
+
+      .signup-form {
+        margin-top: 30px;
+      }
+
+      .form-group {
+        margin-bottom: 25px;
+        text-align: left;
+      }
+
+      .form-label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #333;
+      }
+
+      .form-input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .form-input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+      }
+
+      .signup-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        margin-top: 20px;
+      }
+
+      .signup-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .error-message {
+        color: #dc3545;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        display: none;
+      }
+
+      .success-message {
+        color: #28a745;
+        font-size: 0.9rem;
+        margin-top: 10px;
+        display: none;
+      }
+
+      .back-link {
+        margin-top: 20px;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+
+      .back-link:hover {
+        color: #764ba2;
+      }
+
+      .login-link {
+        margin-top: 15px;
+        color: #667eea;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s ease;
+      }
+
+      .login-link:hover {
+        color: #764ba2;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="signup-container">
+      <h1 class="welcome-title">Welcome to LMS Website</h1>
+      <p class="lms-full-name">Library Management System</p>
+
+      <form class="signup-form" id="studentSignupForm">
+        <div class="form-group">
+          <label class="form-label" for="fullName">Full Name</label>
+          <input
+            type="text"
+            id="fullName"
+            class="form-input"
+            placeholder="Enter your full name"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input
+            type="email"
+            id="email"
+            class="form-input"
+            placeholder="Enter your email"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="studentId">Student ID</label>
+          <input
+            type="text"
+            id="studentId"
+            class="form-input"
+            placeholder="Enter your student ID"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            type="password"
+            id="password"
+            class="form-input"
+            placeholder="Enter password"
+            required
+          />
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirmPassword"
+            >Confirm Password</label
+          >
+          <input
+            type="password"
+            id="confirmPassword"
+            class="form-input"
+            placeholder="Confirm password"
+            required
+          />
+        </div>
+
+        <button type="submit" class="signup-btn">Create Account</button>
+        <div class="error-message" id="errorMessage"></div>
+        <div class="success-message" id="successMessage"></div>
+      </form>
+
+      <div>
+        <a href="index.html" class="back-link">← Back to Home</a>
+        <br />
+        <a href="student-login-enhanced.html" class="login-link"
+          >Already have an account? Login here</a
+        >
+      </div>
+    </div>
+
+    <script>
+      document
+        .getElementById("studentSignupForm")
+        .addEventListener("submit", function (e) {
+          e.preventDefault();
+
+          const fullName = document.getElementById("fullName").value;
+          const email = document.getElementById("email").value;
+          const studentId = document.getElementById("studentId").value;
+          const password = document.getElementById("password").value;
+          const confirmPassword =
+            document.getElementById("confirmPassword").value;
+          const errorMessage = document.getElementById("errorMessage");
+          const successMessage = document.getElementById("successMessage");
+
+          // Clear previous messages
+          errorMessage.style.display = "none";
+          successMessage.style.display = "none";
+
+          // Validation
+          if (password !== confirmPassword) {
+            errorMessage.textContent = "Passwords do not match";
+            errorMessage.style.display = "block";
+            return;
+          }
+
+          if (password.length < 6) {
+            errorMessage.textContent = "Password must be at least 6 characters";
+            errorMessage.style.display = "block";
+            return;
+          }
+
+          // Simulate registration (in real app, this would be an API call)
+          const userData = {
+            fullName,
+            email,
+            studentId,
+            password,
+            role: "student",
+            createdAt: new Date().toISOString(),
+          };
+
+          // Store user data (in real app, this would be in a database)
+          let users = JSON.parse(localStorage.getItem("lmsUsers") || "[]");
+
+          // Check if student ID already exists
+          if (users.find((user) => user.studentId === studentId)) {
+            errorMessage.textContent = "Student ID already exists";
+            errorMessage.style.display = "block";
+            return;
+          }
+
+          users.push(userData);
+          localStorage.setItem("lmsUsers", JSON.stringify(users));
+
+          successMessage.textContent =
+            "Account created successfully! Redirecting to login...";
+          successMessage.style.display = "block";
+
+          setTimeout(() => {
+            window.location.href = "student-login-enhanced.html";
+          }, 2000);
+        });
+    </script>
+  </body>
+</html>

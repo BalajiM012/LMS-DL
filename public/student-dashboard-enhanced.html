@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard - Library Management System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 20px 0;
+        text-align: center;
+        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+      }
+
+      .welcome-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+      }
+
+      .lms-full-name {
+        font-size: 1.2rem;
+        color: white;
+        font-weight: 500;
+      }
+
+      .user-info {
+        position: absolute;
+        top: 20px;
+        right: 20px;
+        color: white;
+        font-weight: 600;
+      }
+
+      .logout-btn {
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 8px 16px;
+        border-radius: 20px;
+        cursor: pointer;
+        margin-left: 10px;
+        transition: background 0.3s ease;
+      }
+
+      .logout-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .search-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .search-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 20px;
+        color: #333;
+        text-align: center;
+      }
+
+      .search-form {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .search-input {
+        flex: 1;
+        min-width: 300px;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 10px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .search-btn {
+        padding: 15px 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 16px;
+        cursor: pointer;
+        transition: transform 0.3s ease;
+      }
+
+      .search-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+      }
+
+      .feature-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .feature-description {
+        color: #666;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+
+      .feature-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .feature-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.3s ease;
+      }
+
+      .back-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .stats-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 30px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+      }
+
+      .stat-card {
+        text-align: center;
+        padding: 20px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border-radius: 15px;
+      }
+
+      .stat-number {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        font-size: 0.9rem;
+        opacity: 0.9;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1 class="welcome-title">Welcome to LMS Website</h1>
+      <p class="lms-full-name">Library Management System</p>
+      <div class="user-info">
+        <span id="userName">Student</span>
+        <button class="logout-btn" onclick="logout()">Logout</button>
+      </div>
+      <a href="index.html" class="back-btn">← Back to Home</a>
+    </div>
+
+    <div class="container">
+      <div class="stats-section">
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-number" id="borrowedBooks">0</div>
+            <div class="stat-label">Books Borrowed</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="availableBooks">0</div>
+            <div class="stat-label">Available Books</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="totalFine">$0</div>
+            <div class="stat-label">Total Fine</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-number" id="dueBooks">0</div>
+            <div class="stat-label">Due Books</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="search-section">
+        <h2 class="search-title">Search Books</h2>
+        <div class="search-form">
+          <input
+            type="text"
+            class="search-input"
+            id="searchInput"
+            placeholder="Search by title, author, or ISBN..."
+          />
+          <button class="search-btn" onclick="searchBooks()">Search</button>
+          <button class="search-btn" onclick="clearSearch()">Clear</button>
+        </div>
+      </div>
+
+      <div class="features-grid">
+        <div class="feature-card" onclick="navigateTo('get-book.html')">
+          <div class="feature-icon">📚</div>
+          <h3 class="feature-title">Get Book</h3>
+          <p class="feature-description">
+            Browse and get available books from the library collection
+          </p>
+          <button class="feature-btn">Get Book</button>
+        </div>
+
+        <div class="feature-card" onclick="navigateTo('submit-book.html')">
+          <div class="feature-icon">📤</div>
+          <h3 class="feature-title">Submit Book</h3>
+          <p class="feature-description">
+            Return borrowed books and update your account
+          </p>
+          <button class="feature-btn">Submit Book</button>
+        </div>
+
+        <div class="feature-card" onclick="navigateTo('borrow-book.html')">
+          <div class="feature-icon">📥</div>
+          <h3 class="feature-title">Borrow Book</h3>
+          <p class="feature-description">
+            Borrow books from the library with due date tracking
+          </p>
+          <button class="feature-btn">Borrow Book</button>
+        </div>
+
+        <div class="feature-card" onclick="navigateTo('history.html')">
+          <div class="feature-icon">📋</div>
+          <h3 class="feature-title">History</h3>
+          <p class="feature-description">
+            View your borrowing history and returned books
+          </p>
+          <button class="feature-btn">View History</button>
+        </div>
+
+        <div class="feature-card" onclick="navigateTo('fine-calculation.html')">
+          <div class="feature-icon">💰</div>
+          <h3 class="feature-title">Fine Calculation</h3>
+          <p class="feature-description">
+            Calculate and view any fines for overdue books
+          </p>
+          <button class="feature-btn">Calculate Fine</button>
+        </div>
+
+        <div
+          class="feature-card"
+          onclick="navigateTo('tensorflow-recommendations.html')"
+        >
+          <div class="feature-icon">🤖</div>
+          <h3 class="feature-title">AI Recommendations</h3>
+          <p class="feature-description">
+            Get AI-powered book recommendations using TensorFlow
+          </p>
+          <button class="feature-btn">Get AI Recommendations</button>
+        </div>
+
+        <div
+          class="feature-card"
+          onclick="navigateTo('tensorflow-dashboard.html')"
+        >
+          <div class="feature-icon">🧠</div>
+          <h3 class="feature-title">AI Dashboard</h3>
+          <p class="feature-description">
+            Access advanced AI features including demand forecasting and fine
+            prediction
+          </p>
+          <button class="feature-btn">Access AI Dashboard</button>
+        </div>
+      </div>
+    </div>
+
+    <script src="js/auth.js"></script>
+    <script>
+      // Check authentication on page load
+      window.addEventListener('load', async function() {
+        const hasAccess = await checkAuthAndRedirect('student');
+        if (!hasAccess) return;
+        
+        loadUserInfo();
+      });
+
+      // Load user info
+      async function loadUserInfo() {
+        try {
+          const user = await authManager.getCurrentUser();
+          if (user) {
+            document.getElementById("userName").textContent = user.fullname || user.username;
+            loadStats();
+          } else {
+            // Fallback to sessionStorage
+            const userFromStorage = authManager.getUserFromStorage();
+            if (userFromStorage) {
+              document.getElementById("userName").textContent = userFromStorage.fullname || userFromStorage.username;
+            }
+            loadStats();
+          }
+        } catch (error) {
+          console.error('Error loading user info:', error);
+          loadStats();
+        }
+      }
+
+      // Load student statistics
+      function loadStats() {
+        // Simulate loading stats from API
+        setTimeout(() => {
+          document.getElementById("borrowedBooks").textContent = "12";
+          document.getElementById("availableBooks").textContent = "1,247";
+          document.getElementById("totalFine").textContent = "$5.50";
+          document.getElementById("dueBooks").textContent = "2";
+        }, 1000);
+      }
+
+      // Search functionality
+      function searchBooks() {
+        const searchTerm = document.getElementById("searchInput").value;
+        if (searchTerm.trim()) {
+          alert(`Searching for: ${searchTerm}`);
+          // Implement actual search functionality here
+        }
+      }
+
+      function clearSearch() {
+        document.getElementById("searchInput").value = "";
+      }
+
+      // Navigation function
+      function navigateTo(page) {
+        window.location.href = page;
+      }
+
+      // Logout function
+      async function logout() {
+        const result = await authManager.logout();
+        if (result.success) {
+          window.location.href = "index.html";
+        } else {
+          alert('Logout failed: ' + result.error);
+          // Force redirect anyway
+          window.location.href = "index.html";
+        }
+      }
+
+      // Handle search on Enter key
+      document
+        .getElementById("searchInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            searchBooks();
+          }
+        });
+    </script>
+  </body>
+</html>

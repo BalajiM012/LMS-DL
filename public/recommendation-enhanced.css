@@ -1,0 +1,248 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recommend Books - Library Management System</title>
+    <link rel="stylesheet" href="recommendation-enhanced.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Header Section -->
+    <header class="header">
+        <div class="nav-buttons">
+            <a href="/index.html" class="nav-btn">
+                <i class="fas fa-home"></i> Home
+            </a>
+            <a href="/student-dashboard-enhanced.html" class="nav-btn">
+                <i class="fas fa-tachometer-alt"></i> Dashboard
+            </a>
+        </div>
+        
+        <div class="welcome-section">
+            <h1 class="welcome-title">Welcome to LMS Website</h1>
+            <p class="lms-full-name">Library Management System</p>
+        </div>
+        
+        <div class="user-info">
+            <span class="username-display" id="username-display">
+                <i class="fas fa-user"></i> <span id="current-user">Guest User</span>
+            </span>
+            <button class="logout-btn" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Container -->
+    <div class="container">
+        <!-- Stats Section -->
+        <section class="stats-section">
+            <h2 class="recommend-title">Library Statistics</h2>
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="total-books">0</div>
+                    <div class="stat-label">Total Books</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="available-books">0</div>
+                    <div class="stat-label">Available Books</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="borrowed-books">0</div>
+                    <div class="stat-label">Currently Borrowed</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="total-users">0</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Search Section -->
+        <section class="search-section">
+            <h2 class="recommend-title">Find Your Next Book</h2>
+            <form class="search-form" onsubmit="searchBooks(event)">
+                <input type="text" class="search-input" id="search-input" 
+                       placeholder="Search by title, author, or genre..." />
+                <button type="submit" class="search-btn">
+                    <i class="fas fa-search"></i> Search
+                </button>
+            </form>
+        </section>
+
+        <!-- Categories Section -->
+        <section class="categories-section">
+            <h3 class="categories-title">Browse by Category</h3>
+            <div class="category-chips">
+                <span class="category-chip" onclick="filterByCategory('Programming')">Programming</span>
+                <span class="category-chip" onclick="filterByCategory('Data Science')">Data Science</span>
+                <span class="category-chip" onclick="filterByCategory('Web Development')">Web Development</span>
+                <span class="category-chip" onclick="filterByCategory('AI')">Artificial Intelligence</span>
+                <span class="category-chip" onclick="filterByCategory('Database')">Database</span>
+                <span class="category-chip" onclick="filterByCategory('Security')">Security</span>
+                <span class="category-chip" onclick="filterByCategory('Business')">Business</span>
+                <span class="category-chip" onclick="filterByCategory('Fiction')">Fiction</span>
+                <span class="category-chip" onclick="filterByCategory('Science')">Science</span>
+                <span class="category-chip" onclick="filterByCategory('History')">History</span>
+            </div>
+        </section>
+
+        <!-- Recommendations Section -->
+        <section class="recommend-section">
+            <h2 class="recommend-title">Personalized Recommendations</h2>
+            <div class="preferences-section">
+                <h3 class="preferences-title">Your Reading Preferences</h3>
+                <div class="preferences-form">
+                    <div class="form-group">
+                        <label class="form-label">Preferred Genre</label>
+                        <select class="form-select" id="preferred-genre">
+                            <option value="">All Genres</option>
+                            <option value="Programming">Programming</option>
+                            <option value="Data Science">Data Science</option>
+                            <option value="Web Development">Web Development</option>
+                            <option value="AI">Artificial Intelligence</option>
+                            <option value="Database">Database</option>
+                            <option value="Security">Security</option>
+                            <option value="Business">Business</option>
+                            <option value="Fiction">Fiction</option>
+                            <option value="Science">Science</option>
+                            <option value="History">History</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Author Preference</label>
+                        <input type="text" class="form-input" id="preferred-author" 
+                               placeholder="Enter preferred author name" />
+                    </div>
+                </div>
+                <button class="recommend-btn" onclick="getRecommendations()">
+                    <i class="fas fa-magic"></i> Get Recommendations
+                </button>
+            </div>
+
+            <div id="recommendations-container">
+                <div class="loading" id="loading">
+                    <i class="fas fa-spinner fa-spin"></i> Loading recommendations...
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // Global variables
+        let currentUser = null;
+        let allBooks = [];
+        let recommendations = [];
+
+        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            initializePage();
+            loadLibraryStats();
+            loadAllBooks();
+        });
+
+        // Initialize user session
+        async function initializePage() {
+            try {
+                const response = await fetch('/api/auth/me');
+                if (response.ok) {
+                    const userData = await response.json();
+                    currentUser = userData;
+                    document.getElementById('current-user').textContent = userData.fullname || userData.username;
+                } else {
+                    document.getElementById('current-user').textContent = 'Guest User';
+                }
+            } catch (error) {
+                console.error('Error loading user:', error);
+                document.getElementById('current-user').textContent = 'Guest User';
+            }
+        }
+
+        // Load library statistics
+        async function loadLibraryStats() {
+            try {
+                const [booksResponse, usersResponse, borrowedResponse] = await Promise.all([
+                    fetch('/api/book_management/books'),
+                    fetch('/api/manage_users/users'),
+                    fetch('/api/book_management/borrowed')
+                ]);
+
+                if (booksResponse.ok) {
+                    const books = await booksResponse.json();
+                    allBooks = books;
+                    document.getElementById('total-books').textContent = books.length;
+                    
+                    const available = books.reduce((sum, book) => sum + book.copies_available, 0);
+                    document.getElementById('available-books').textContent = available;
+                }
+
+                if (usersResponse.ok) {
+                    const users = await usersResponse.json();
+                    document.getElementById('total-users').textContent = users.length;
+                }
+
+                if (borrowedResponse.ok) {
+                    const borrowed = await borrowedResponse.json();
+                    document.getElementById('borrowed-books').textContent = borrowed.length;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        // Load all books
+        async function loadAllBooks() {
+            try {
+                const response = await fetch('/api/book_management/books');
+                if (response.ok) {
+                    allBooks = await response.json();
+                }
+            } catch (error) {
+                console.error('Error loading books:', error);
+            }
+        }
+
+        // Get personalized recommendations
+        async function getRecommendations() {
+            const container = document.getElementById('recommendations-container');
+            const loading = document.getElementById('loading');
+            
+            loading.style.display = 'block';
+            container.innerHTML = '<div class="loading"><i class="fas fa-spinner fa-spin"></i> Loading recommendations...</div>';
+            
+            try {
+                const userId = currentUser ? currentUser.id : 1;
+                const [collaborative, contentBased, hybrid] = await Promise.all([
+                    fetch(`/api/book_recommendation/collaborative`).then(r => r.json()),
+                    fetch(`/api/book_recommendation/content_based`).then(r => r.json()),
+                    fetch(`/api/book_recommendation/hybrid`).then(r => r.json())
+                ]);
+                
+                displayRecommendations({
+                    collaborative: collaborative.recommendations,
+                    contentBased: contentBased.recommendations,
+                    hybrid: hybrid.recommendations
+                });
+                
+            } catch (error) {
+                console.error('Error getting recommendations:', error);
+                container.innerHTML = '<div class="no-recommendations"><i class="fas fa-exclamation-triangle"></i> Error loading recommendations. Please try again.</div>';
+            }
+        }
+
+        // Display recommendations
+        function displayRecommendations(data) {
+            const container = document.getElementById('recommendations-container');
+            container.innerHTML = '';
+            
+            const sections = [
+                { title: 'Collaborative Filtering', books: data.collaborative, icon: 'fas fa-users' },
+                { title: 'Content Based', books: data.contentBased, icon: 'fas fa-book' },
+                { title: 'Hybrid Recommendations', books: data.hybrid, icon: 'fas fa-magic' }
+            ];
+            
+            sections.forEach(section => {
+                if (section.books && section.books.length > 0) {
+                    const sectionDiv = document.createElement('div');
+                    sectionDiv.class

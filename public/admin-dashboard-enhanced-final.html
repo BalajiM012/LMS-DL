@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LMS Admin Dashboard - Enhanced</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.95);
+        -webkit-backdrop-filter: blur(10px);
+        backdrop-filter: blur(10px);
+        padding: 20px 30px;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        position: sticky;
+        top: 0;
+        z-index: 1000;
+      }
+
+      .welcome-section {
+        text-align: center;
+        flex: 1;
+      }
+
+      .welcome-title {
+        font-size: 2.5rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 5px;
+      }
+
+      .user-name {
+        font-size: 1.2rem;
+        color: #666;
+        font-weight: 500;
+      }
+
+      .nav-buttons {
+        display: flex;
+        gap: 15px;
+        align-items: center;
+      }
+
+      .nav-btn {
+        padding: 10px 20px;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .home-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .logout-btn {
+        background: #ff6b6b;
+        color: white;
+      }
+
+      .nav-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 30px;
+      }
+
+      .search-section {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .search-container {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .search-input {
+        padding: 12px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 25px;
+        font-size: 16px;
+        width: 300px;
+        transition: border-color 0.3s ease;
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .search-btn {
+        padding: 12px 25px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+      }
+
+      .search-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .stats-section {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: 20px;
+        margin-bottom: 30px;
+      }
+
+      .stat-card {
+        background: white;
+        padding: 25px;
+        border-radius: 15px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.1);
+        text-align: center;
+        transition: transform 0.3s ease;
+      }
+
+      .stat-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .stat-number {
+        font-size: 2.5rem;
+        font-weight: bold;
+        color: #667eea;
+        margin-bottom: 5px;
+      }
+
+      .stat-label {
+        color: #666;
+        font-size: 1.1rem;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 30px;
+      }
+
+      .feature-card {
+        background: white;
+        padding: 30px;
+        border-radius: 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        text-align: center;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 15px;
+        display: block;
+      }
+
+      .feature-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .feature-description {
+        color: #666;
+        margin-bottom: 20px;
+        line-height: 1.5;
+      }
+
+      .feature-btn {
+        padding: 12px 30px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        cursor: pointer;
+        font-weight: 600;
+        transition: all 0.3s ease;
+        text-decoration: none;
+        display: inline-block;
+      }
+
+      .feature-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .loading {
+        display: inline-block;
+        width: 20px;
+        height: 20px;
+        border: 3px solid #f3f3f3;
+        border-top: 3px solid #667eea;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      .error-message {
+        color: #ff6b6b;
+        text-align: center;
+        padding: 20px;
+        background: rgba(255, 107, 107, 0.1);
+        border-radius: 10px;
+        margin: 10px 0;
+      }
+
+      @media (max-width: 768px) {
+        .header {
+          flex-direction: column;
+          gap: 15px;
+        }
+
+        .welcome-title {
+          font-size: 2rem;
+        }
+
+        .search-container {
+          flex-direction: column;
+        }
+
+        .search-input {
+          width: 100%;
+          max-width: 300px;
+        }
+      }
+
+      .search-results-hidden {
+        margin-top: 20px;
+        display: none;
+      }
+    </style>
+  </head>
+  <body>
+    <header class="header">
+      <div class="welcome-section">
+        <h1 class="welcome-title">Welcome to LMS Website</h1>
+        <p class="user-name" id="userName">Loading user...</p>
+      </div>
+      <div class="nav-buttons">
+        <button class="nav-btn home-btn" onclick="goHome()">Home</button>
+        <button class="nav-btn logout-btn" onclick="logout()">Logout</button>
+      </div>
+    </header>
+
+    <div class="container">
+      <!-- Search Section -->
+      <div class="search-section">
+        <h2>Search Library</h2>
+        <div class="search-container">
+          <input
+            type="text"
+            id="searchInput"
+            class="search-input"
+        <div id="searchResults" class="search-results-hidden">
+          <h3>Search Results</h3>
+          <div id="searchResultsContent"></div>
+        </div>
+        </div>
+        <div id="searchResults" style="margin-top: 20px; display: none">
+          <h3>Search Results</h3>
+          <div id="searchResultsContent"></div>
+        </div>
+      </div>
+
+      <!-- Statistics Section -->
+      <div class="stats-section">
+        <div class="stat-card">
+          <div class="stat-number" id="totalBooks">
+            <span class="loading"></span>
+          </div>
+          <div class="stat-label">Total Books</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="totalUsers">
+            <span class="loading"></span>
+          </div>
+          <div class="stat-label">Total Users</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="borrowedBooks">
+            <span class="loading"></span>
+          </div>
+          <div class="stat-label">Borrowed Books</div>
+        </div>
+        <div class="stat-card">
+          <div class="stat-number" id="totalFines">
+            <span class="loading"></span>
+          </div>
+          <div class="stat-label">Total Fines</div>
+        </div>
+      </div>
+
+      <!-- Features Grid -->
+      <div class="features-grid">
+        <div class="feature-card">
+          <span class="feature-icon">📚</span>
+          <h3 class="feature-title">Book Management</h3>
+          <p class="feature-description">
+            View and manage all books in the library system
+          </p>
+          <button
+            class="feature-btn"
+            onclick="navigateTo('book-management-enhanced.html')"
+          >
+            Manage Books
+          </button>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">➕</span>
+          <h3 class="feature-title">Add New Book</h3>
+          <p class="feature-description">
+            Add new books to the library collection
+          </p>
+          <button
+            class="feature-btn"
+            onclick="navigateTo('submit-book-enhanced.html')"
+          >
+            Add Book
+          </button>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">📤</span>
+          <h3 class="feature-title">Borrow Book</h3>
+          <p class="feature-description">Process book borrowing requests</p>
+          <button
+            class="feature-btn"
+            onclick="navigateTo('borrow-book-enhanced.html')"
+          >
+            Borrow Book
+          </button>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">📊</span>
+          <h3 class="feature-title">Borrowing History</h3>
+          <p class="feature-description">View complete borrowing history</p>
+          <button
+            class="feature-btn"
+            onclick="navigateTo('history-enhanced.html')"
+          >
+            View History
+          </button>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">💰</span>
+          <h3 class="feature-title">Fine Calculation</h3>
+          <p class="feature-description">Calculate fines for overdue books</p>
+          <button
+            class="feature-btn"
+            onclick="navigateTo('fine-calculation-enhanced.html')"
+          >
+            Calculate Fines
+          </button>
+        </div>
+
+        <div class="feature-card">
+          <span class="feature-icon">👥</span>
+          <h3 class="feature-title">Manage Users</h3>
+          <p class="feature-description">
+            Administer user accounts and permissions
+          </p>
+          <button class="feature-btn" onclick="manageUsers()">
+            Manage Users
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // API Configuration
+      const API_BASE_URL = "/api";
+
+      // Check authentication and load user info
+      window.addEventListener("DOMContentLoaded", function () {
+        const user = JSON.parse(sessionStorage.getItem("user"));
+
+        if (!user || user.role !== "admin") {
+          window.location.href = "admin-login-enhanced.html";
+          return;
+        }
+
+        document.getElementById("userName").textContent = `Welcome, ${
+          user.fullname || user.username || "Admin"
+        }`;
+
+        // Load real data from API
+        loadDashboardStats();
+        loadCategories();
+      });
+
+      // Load dashboard statistics from API
+      async function loadDashboardStats() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/stats`);
+          const data = await response.json();
+
+          if (data.success) {
+            document.getElementById("totalBooks").innerHTML =
+              data.data.total_books.toLocaleString();
+            document.getElementById("totalUsers").innerHTML =
+              data.data.total_students.toLocaleString();
+            document.getElementById("borrowedBooks").innerHTML =
+              data.data.books_issued.toLocaleString();
+            document.getElementById("totalFines").innerHTML = `$${
+              data.data.total_fines || 0
+            }`;
+          }
+        } catch (error) {
+          console.error("Error loading stats:", error);
+          // Fallback to placeholder values
+          document.getElementById("totalBooks").innerHTML = "0";
+          document.getElementById("totalUsers").innerHTML = "0";
+          document.getElementById("borrowedBooks").innerHTML = "0";
+          document.getElementById("totalFines").innerHTML = "$0";
+        }
+      }
+
+      // Load book categories for search
+      async function loadCategories() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/categories`);
+          const data = await response.json();
+
+          if (data.success) {
+            window.bookCategories = data.data;
+          }
+        } catch (error) {
+          console.error("Error loading categories:", error);
+        }
+      }
+
+      // Navigation functions
+      function navigateTo(page) {
+        window.location.href = page;
+      }
+
+      function goHome() {
+        window.location.href = "index.html";
+      }
+
+      function logout() {
+        sessionStorage.removeItem("user");
+        window.location.href = "admin-login-enhanced.html";
+      }
+
+      // Search functionality
+      async function performSearch() {
+        const query = document.getElementById("searchInput").value.trim();
+        if (!query) {
+          alert("Please enter a search term");
+          return;
+        }
+
+        try {
+          const response = await fetch(
+            `${API_BASE_URL}/books/search?q=${encodeURIComponent(query)}`
+          );
+          const data = await response.json();
+
+          if (data.success) {
+            displaySearchResults(data.data);
+          }
+        } catch (error) {
+          console.error("Error searching:", error);
+          alert("Error performing search. Please try again.");
+        }
+      }
+
+      function displaySearchResults(results) {
+        const resultsContainer = document.getElementById("searchResults");
+        const content = document.getElementById("searchResultsContent");
+
+        if (results.length === 0) {
+          content.innerHTML = "<p>No results found.</p>";
+        } else {
+          let html = '<table style="width: 100%; border-collapse: collapse;">';
+          html +=
+            '<thead><tr><th style="padding: 10px; border-bottom: 1px solid #ddd;">Title</th><th style="padding: 10px; border-bottom: 1px solid #ddd;">Author</th><th style="padding: 10px; border-bottom: 1px solid #ddd;">Category</th><th style="padding: 10px; border-bottom: 1px solid #ddd;">Available</th></tr></thead>';
+          html += "<tbody>";
+
+          results.forEach((book) => {
+            html += `<tr>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${book.title}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${book.author}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${book.category}</td>
+                        <td style="padding: 10px; border-bottom: 1px solid #eee;">${book.available_quantity}</td>
+                    </tr>`;
+          });
+
+          html += "</tbody></table>";
+          content.innerHTML = html;
+        }
+
+        resultsContainer.style.display = "block";
+      }
+
+      function clearSearch() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("searchResults").style.display = "none";
+      }
+
+      // User Management
+      async function manageUsers() {
+        try {
+          const response = await fetch(`${API_BASE_URL}/students`);
+          const data = await response.json();
+
+          if (data.success) {
+            alert(
+              `Found ${data.data.length} users. User management interface coming soon!`
+            );
+          }
+        } catch (error) {
+          console.error("Error loading users:", error);
+        }
+      }
+    </script>
+  </body>
+</html>

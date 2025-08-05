@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Dashboard - Library Management System</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 30px 0;
+        text-align: center;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .welcome-title {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+      }
+
+      .lms-full-name {
+        font-size: 1.5rem;
+        color: white;
+        font-weight: 500;
+        margin-bottom: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .dashboard-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 40px;
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .ai-status {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        margin: 5px;
+      }
+
+      .status-loading {
+        background-color: #ffc107;
+        color: #212529;
+      }
+
+      .status-ready {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .status-error {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .feature-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        text-align: center;
+      }
+
+      .feature-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 15px;
+        text-align: center;
+      }
+
+      .feature-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 20px;
+      }
+
+      .feature-btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 10px;
+        font-size: 1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        text-align: center;
+        text-decoration: none;
+      }
+
+      .feature-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .chart-container {
+        margin: 30px 0;
+        height: 400px;
+      }
+
+      .results-section {
+        margin-top: 40px;
+      }
+
+      .results-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-top: 20px;
+      }
+
+      .result-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+      }
+
+      .result-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .result-value {
+        font-size: 1.5rem;
+        font-weight: bold;
+        color: #667eea;
+      }
+
+      .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.3s ease;
+      }
+
+      .back-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .loading-spinner {
+        display: none;
+        text-align: center;
+        margin: 40px 0;
+      }
+
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .welcome-title {
+          font-size: 2rem;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1 class="welcome-title">Welcome to LMS Website</h1>
+      <p class="lms-full-name">Library Management System - AI Dashboard</p>
+      <a href="student-dashboard-enhanced.html" class="back-btn"
+        >← Back to Dashboard</a
+      >
+    </div>
+
+    <div class="container">
+      <div class="dashboard-section">
+        <h2 class="section-title">AI-Powered Library Management</h2>
+
+        <div class="ai-status">
+          <div class="status-indicator status-loading" id="aiStatus">
+            Loading TensorFlow AI Dashboard...
+          </div>
+        </div>
+
+        <div class="features-grid">
+          <div class="feature-card">
+            <div class="feature-icon">📚</div>
+            <h3 class="feature-title">Book Recommendations</h3>
+            <p class="feature-description">
+              Get personalized book recommendations based on your reading
+              history using advanced AI algorithms.
+            </p>
+            <button class="feature-btn" onclick="getRecommendations()">
+              Get Recommendations
+            </button>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">📈</div>
+            <h3 class="feature-title">Demand Forecasting</h3>
+            <p class="feature-description">
+              Predict future book demand to optimize inventory and purchasing
+              decisions.
+            </p>
+            <button class="feature-btn" onclick="getDemandForecast()">
+              View Forecast
+            </button>
+          </div>
+
+          <div class="feature-card">
+            <div class="feature-icon">💰</div>
+            <h3 class="feature-title">Fine Prediction</h3>
+            <p class="feature-description">
+              Estimate potential fines for late returns based on user history
+              and book popularity.
+            </p>
+            <button class="feature-btn" onclick="predictFine()">
+              Predict Fine
+            </button>
+          </div>
+        </div>
+
+        <div class="loading-spinner" id="loadingSpinner">
+          <div class="spinner"></div>
+          <p>AI is processing your request...</p>
+        </div>
+
+        <div class="results-section">
+          <h3>AI Results</h3>
+          <div class="results-grid" id="resultsGrid">
+            <!-- Results will be populated here -->
+          </div>
+        </div>
+
+        <div class="chart-container">
+          <canvas id="forecastChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      let forecastChart;
+
+      // Initialize TensorFlow dashboard
+      async function initTensorFlowDashboard() {
+        try {
+          const response = await fetch("/api/tensorflow/status");
+          const data = await response.json();
+
+          if (data.success) {
+            document.getElementById("aiStatus").textContent =
+              "TensorFlow AI Dashboard Ready!";
+            document.getElementById("aiStatus").className =
+              "status-indicator status-ready";
+          } else {
+            document.getElementById("aiStatus").textContent =
+              "AI Dashboard Loading Failed";
+            document.getElementById("aiStatus").className =
+              "status-indicator status-error";
+          }
+        } catch (error) {
+          document.getElementById("aiStatus").textContent =
+            "AI Dashboard Connection Error";
+          document.getElementById("aiStatus").className =
+            "status-indicator status-error";
+        }
+      }
+
+      // Get book recommendations
+      async function getRecommendations() {
+        showLoading(true);
+        try {
+          const response = await fetch("/api/tensorflow/recommendations");
+          const data = await response.json();
+
+          if (data.success) {
+            displayRecommendations(data.data);
+          } else {
+            alert("Error: " + data.error);
+          }
+        } catch (error) {
+          alert("Error: " + error.message);
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      // Get demand forecast
+      async function getDemandForecast() {
+        showLoading(true);
+        try {
+          const response = await fetch("/api/tensorflow/demand_forecast");
+          const data = await response.json();
+
+          if (data.success) {
+            displayDemandForecast(data.data);
+            updateChart(data.data);
+          } else {
+            alert("Error: " + data.error);
+          }
+        } catch (error) {
+          alert("Error: " + error.message);
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      // Predict fine
+      async function predictFine() {
+        showLoading(true);
+        try {
+          // For demo purposes, using mock data
+          const requestData = {
+            student_id: 1,
+            book_id: 1,
+          };
+
+          const response = await fetch("/api/tensorflow/fine_prediction", {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+            },
+            body: JSON.stringify(requestData),
+          });
+
+          const data = await response.json();
+
+          if (data.success) {
+            displayFinePrediction(data.data);
+          } else {
+            alert("Error: " + data.error);
+          }
+        } catch (error) {
+          alert("Error: " + error.message);
+        } finally {
+          showLoading(false);
+        }
+      }
+
+      // Display recommendations
+      function displayRecommendations(recommendations) {
+        const grid = document.getElementById("resultsGrid");
+        grid.innerHTML = "";
+
+        recommendations.slice(0, 4).forEach((book) => {
+          const card = document.createElement("div");
+          card.className = "result-card";
+
+          card.innerHTML = `
+            <div class="result-title">${book.title}</div>
+            <div class="result-value">Score: ${(
+              book.recommendation_score * 100
+            ).toFixed(1)}%</div>
+            <div>by ${book.author}</div>
+            <div>${book.category}</div>
+          `;
+
+          grid.appendChild(card);
+        });
+      }
+
+      // Display demand forecast
+      function displayDemandForecast(forecasts) {
+        const grid = document.getElementById("resultsGrid");
+        grid.innerHTML = "";
+
+        forecasts.slice(0, 4).forEach((forecast) => {
+          const card = document.createElement("div");
+          card.className = "result-card";
+
+          card.innerHTML = `
+            <div class="result-title">${forecast.title}</div>
+            <div class="result-value">Forecast: ${forecast.forecast.toFixed(
+              1
+            )}</div>
+            <div>Demand: ${forecast.demand_level}</div>
+            <div>Confidence: ${(forecast.confidence * 100).toFixed(1)}%</div>
+          `;
+
+          grid.appendChild(card);
+        });
+      }
+
+      // Display fine prediction
+      function displayFinePrediction(prediction) {
+        const grid = document.getElementById("resultsGrid");
+        grid.innerHTML = "";
+
+        const card = document.createElement("div");
+        card.className = "result-card";
+
+        card.innerHTML = `
+          <div class="result-title">Fine Prediction</div>
+          <div class="result-value">$${prediction.predicted_fine.toFixed(
+            2
+          )}</div>
+          <div>Risk Level: ${prediction.risk_level}</div>
+          <div>Confidence: ${(prediction.confidence * 100).toFixed(1)}%</div>
+        `;
+
+        grid.appendChild(card);
+      }
+
+      // Update chart with forecast data
+      function updateChart(forecasts) {
+        const ctx = document.getElementById("forecastChart").getContext("2d");
+
+        // Destroy existing chart if it exists
+        if (forecastChart) {
+          forecastChart.destroy();
+        }
+
+        // Prepare data for chart
+        const labels = forecasts.slice(0, 10).map((f) => f.title);
+        const data = forecasts.slice(0, 10).map((f) => f.forecast);
+
+        forecastChart = new Chart(ctx, {
+          type: "bar",
+          data: {
+            labels: labels,
+            datasets: [
+              {
+                label: "Demand Forecast",
+                data: data,
+                backgroundColor: "rgba(102, 126, 234, 0.6)",
+                borderColor: "rgba(102, 126, 234, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Forecast Value",
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Books",
+                },
+              },
+            },
+          },
+        });
+      }
+
+      // Show/hide loading spinner
+      function showLoading(show) {
+        document.getElementById("loadingSpinner").style.display = show
+          ? "block"
+          : "none";
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", initTensorFlowDashboard);
+    </script>
+  </body>
+</html>

@@ -1,0 +1,468 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Portal - Library Management System</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        padding: 30px 0;
+        text-align: center;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .welcome-title {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+      }
+
+      .lms-full-name {
+        font-size: 1.5rem;
+        color: white;
+        font-weight: 500;
+        margin-bottom: 20px;
+      }
+
+      .process-flow {
+        display: flex;
+        justify-content: center;
+        gap: 30px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+
+      .process-step {
+        background: rgba(255, 255, 255, 0.2);
+        padding: 15px 25px;
+        border-radius: 25px;
+        color: white;
+        font-weight: 600;
+        transition: transform 0.3s ease;
+      }
+
+      .process-step:hover {
+        transform: translateY(-3px);
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .search-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        margin-bottom: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        text-align: center;
+      }
+
+      .search-title {
+        font-size: 2rem;
+        font-weight: bold;
+        margin-bottom: 30px;
+        color: #333;
+      }
+
+      .search-form {
+        display: flex;
+        gap: 15px;
+        justify-content: center;
+        align-items: center;
+        flex-wrap: wrap;
+      }
+
+      .search-input {
+        flex: 1;
+        min-width: 300px;
+        padding: 15px 20px;
+        border: 2px solid #e0e0e0;
+        border-radius: 25px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+        background: rgba(255, 255, 255, 0.8);
+      }
+
+      .search-input:focus {
+        outline: none;
+        border-color: #667eea;
+        background: white;
+      }
+
+      .search-btn,
+      .clear-btn {
+        padding: 15px 30px;
+        border: none;
+        border-radius: 25px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .search-btn {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+      }
+
+      .clear-btn {
+        background: #f0f0f0;
+        color: #333;
+      }
+
+      .search-btn:hover,
+      .clear-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .feature-card {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        text-align: center;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+        cursor: pointer;
+      }
+
+      .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+      }
+
+      .feature-icon {
+        font-size: 3rem;
+        margin-bottom: 20px;
+        display: block;
+      }
+
+      .feature-title {
+        font-size: 1.5rem;
+        font-weight: bold;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .feature-description {
+        color: #666;
+        margin-bottom: 25px;
+        line-height: 1.6;
+      }
+
+      .feature-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .feature-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.3s ease;
+      }
+
+      .back-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .search-results {
+        margin-top: 30px;
+        display: none;
+      }
+
+      .book-item {
+        background: rgba(255, 255, 255, 0.9);
+        padding: 20px;
+        margin: 10px 0;
+        border-radius: 15px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+
+      .book-title {
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 5px;
+      }
+
+      .book-author {
+        color: #666;
+        margin-bottom: 5px;
+      }
+
+      .book-status {
+        color: #667eea;
+        font-weight: 600;
+      }
+
+      @media (max-width: 768px) {
+        .welcome-title {
+          font-size: 2rem;
+        }
+
+        .lms-full-name {
+          font-size: 1.2rem;
+        }
+
+        .features-grid {
+          grid-template-columns: 1fr;
+        }
+
+        .search-form {
+          flex-direction: column;
+        }
+
+        .search-input {
+          min-width: auto;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1 class="welcome-title">Welcome to LMS Website</h1>
+      <p class="lms-full-name">Library Management System</p>
+      <div class="process-flow">
+        <div class="process-step">Student → Student Login</div>
+        <div class="process-step">Student Login → Student Dashboard</div>
+      </div>
+      <a href="index.html" class="back-btn">← Back to Home</a>
+    </div>
+
+    <div class="container">
+      <div class="search-section">
+        <h2 class="search-title">Search Books</h2>
+        <div class="search-form">
+          <input
+            type="text"
+            class="search-input"
+            id="searchInput"
+            placeholder="Search by title, author, ISBN, or genre..."
+          />
+          <button class="search-btn" onclick="searchBooks()">Search</button>
+          <button class="clear-btn" onclick="clearSearch()">Clear</button>
+        </div>
+        <div id="searchResults" class="search-results"></div>
+      </div>
+
+      <div class="features-grid">
+        <div
+          class="feature-card"
+          onclick="navigateTo('get-book-enhanced.html')"
+        >
+          <span class="feature-icon">�</span>
+          <h3 class="feature-title">Get Book</h3>
+          <p class="feature-description">
+            Browse and get available books from the library collection
+          </p>
+          <button class="feature-btn">Get Book</button>
+        </div>
+
+        <div
+          class="feature-card"
+          onclick="navigateTo('submit-book-enhanced.html')"
+        >
+          <span class="feature-icon">�</span>
+          <h3 class="feature-title">Submit Book</h3>
+          <p class="feature-description">
+            Return borrowed books and update your account
+          </p>
+          <button class="feature-btn">Submit Book</button>
+        </div>
+
+        <div
+          class="feature-card"
+          onclick="navigateTo('borrow-book-enhanced.html')"
+        >
+          <span class="feature-icon">📥</span>
+          <h3 class="feature-title">Borrow Book</h3>
+          <p class="feature-description">
+            Borrow books from the library with due date tracking
+          </p>
+          <button class="feature-btn">Borrow Book</button>
+        </div>
+
+        <div class="feature-card" onclick="navigateTo('history-enhanced.html')">
+          <span class="feature-icon">📋</span>
+          <h3 class="feature-title">History</h3>
+          <p class="feature-description">
+            View your borrowing history and returned books
+          </p>
+          <button class="feature-btn">View History</button>
+        </div>
+
+        <div
+          class="feature-card"
+          onclick="navigateTo('fine-calculation-enhanced.html')"
+        >
+          <span class="feature-icon">💰</span>
+          <h3 class="feature-title">Fine Calculation</h3>
+          <p class="feature-description">
+            Calculate and view any fines for overdue books
+          </p>
+          <button class="feature-btn">Calculate Fine</button>
+        </div>
+
+        <div
+          class="feature-card"
+          onclick="navigateTo('student-dashboard-search-enhanced.html')"
+        >
+          <span class="feature-icon">🎯</span>
+          <h3 class="feature-title">Recommend Books</h3>
+          <p class="feature-description">
+            Get personalized book recommendations based on your interests
+          </p>
+          <button class="feature-btn">Get Recommendations</button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Sample book data for search functionality
+      const books = [
+        {
+          title: "The Great Gatsby",
+          author: "F. Scott Fitzgerald",
+          isbn: "978-0-7432-7356-5",
+          genre: "Classic",
+          status: "Available",
+        },
+        {
+          title: "To Kill a Mockingbird",
+          author: "Harper Lee",
+          isbn: "978-0-06-112008-4",
+          genre: "Classic",
+          status: "Borrowed",
+        },
+        {
+          title: "1984",
+          author: "George Orwell",
+          isbn: "978-0-452-28423-4",
+          genre: "Dystopian",
+          status: "Available",
+        },
+        {
+          title: "Pride and Prejudice",
+          author: "Jane Austen",
+          isbn: "978-0-14-143951-8",
+          genre: "Romance",
+          status: "Available",
+        },
+        {
+          title: "The Catcher in the Rye",
+          author: "J.D. Salinger",
+          isbn: "978-0-316-76948-0",
+          genre: "Fiction",
+          status: "Borrowed",
+        },
+      ];
+
+      function searchBooks() {
+        const searchTerm = document
+          .getElementById("searchInput")
+          .value.toLowerCase();
+        const resultsDiv = document.getElementById("searchResults");
+
+        if (!searchTerm.trim()) {
+          resultsDiv.style.display = "none";
+          return;
+        }
+
+        const filteredBooks = books.filter(
+          (book) =>
+            book.title.toLowerCase().includes(searchTerm) ||
+            book.author.toLowerCase().includes(searchTerm) ||
+            book.isbn.includes(searchTerm) ||
+            book.genre.toLowerCase().includes(searchTerm)
+        );
+
+        if (filteredBooks.length > 0) {
+          resultsDiv.innerHTML = "<h3>Search Results:</h3>";
+          filteredBooks.forEach((book) => {
+            resultsDiv.innerHTML += `
+                        <div class="book-item">
+                            <div class="book-title">${book.title}</div>
+                            <div class="book-author">by ${book.author}</div>
+                            <div class="book-status">Status: ${book.status}</div>
+                        </div>
+                    `;
+          });
+          resultsDiv.style.display = "block";
+        } else {
+          resultsDiv.innerHTML =
+            "<h3>No books found matching your search.</h3>";
+          resultsDiv.style.display = "block";
+        }
+      }
+
+      function clearSearch() {
+        document.getElementById("searchInput").value = "";
+        document.getElementById("searchResults").style.display = "none";
+      }
+
+      function navigateTo(page) {
+        window.location.href = page;
+      }
+
+      // Handle Enter key for search
+      document
+        .getElementById("searchInput")
+        .addEventListener("keypress", function (e) {
+          if (e.key === "Enter") {
+            searchBooks();
+          }
+        });
+    </script>
+  </body>
+</html>

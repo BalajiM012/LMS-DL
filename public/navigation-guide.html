@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>LMS Navigation Guide</title>
+    <style>
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        margin: 0;
+        padding: 20px;
+        color: #333;
+      }
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+      h1 {
+        text-align: center;
+        color: #667eea;
+        margin-bottom: 30px;
+      }
+      .nav-section {
+        margin: 20px 0;
+        padding: 20px;
+        background: #f8f9fa;
+        border-radius: 10px;
+      }
+      .nav-section h2 {
+        color: #333;
+        margin-bottom: 15px;
+      }
+      .nav-links {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 10px;
+      }
+      .nav-link {
+        display: block;
+        padding: 10px 15px;
+        background: #667eea;
+        color: white;
+        text-decoration: none;
+        border-radius: 5px;
+        transition: background 0.3s ease;
+      }
+      .nav-link:hover {
+        background: #764ba2;
+      }
+      .process-flow {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 10px;
+        margin: 20px 0;
+      }
+      .process-step {
+        margin: 10px 0;
+        padding: 10px;
+        background: white;
+        border-left: 4px solid #667eea;
+        border-radius: 5px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>Library Management System - Navigation Guide</h1>
+
+      <div class="nav-section">
+        <h2>Admin Flow</h2>
+        <div class="process-flow">
+          <div class="process-step">
+            <strong>1. Admin Login:</strong>
+            <a href="admin-login-enhanced.html" class="nav-link"
+              >admin-login-enhanced.html</a
+            >
+          </div>
+          <div class="process-step">
+            <strong>2. Admin Dashboard:</strong>
+            <a href="admin-dashboard-enhanced-final.html" class="nav-link"
+              >admin-dashboard-enhanced-final.html</a
+            >
+          </div>
+          <div class="process-step">
+            <strong>3. Book Management:</strong>
+            <a href="book-management-enhanced.html" class="nav-link"
+              >book-management-enhanced.html</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <h2>Student Flow</h2>
+        <div class="process-flow">
+          <div class="process-step">
+            <strong>1. Student Login:</strong>
+            <a href="student-login-enhanced.html" class="nav-link"
+              >student-login-enhanced.html</a
+            >
+          </div>
+          <div class="process-step">
+            <strong>2. Student Dashboard:</strong>
+            <a href="student-dashboard-enhanced.html" class="nav-link"
+              >student-dashboard-enhanced.html</a
+            >
+          </div>
+          <div class="process-step">
+            <strong>3. Enhanced Search:</strong>
+            <a href="student-dashboard-search-enhanced.html" class="nav-link"
+              >student-dashboard-search-enhanced.html</a
+            >
+          </div>
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <h2>Student Features</h2>
+        <div class="nav-links">
+          <a href="get-book-enhanced.html" class="nav-link">Get Book</a>
+          <a href="borrow-book-enhanced.html" class="nav-link">Borrow Book</a>
+          <a href="submit-book-enhanced.html" class="nav-link">Submit Book</a>
+          <a href="history-enhanced.html" class="nav-link">History</a>
+          <a href="fine-calculation-enhanced.html" class="nav-link"
+            >Fine Calculation</a
+          >
+        </div>
+      </div>
+
+      <div class="nav-section">
+        <h2>Home & General</h2>
+        <div class="nav-links">
+          <a href="index.html" class="nav-link">Home Page</a>
+          <a href="index.html" class="nav-link">Main Landing Page</a>
+        </div>
+      </div>
+    </div>
+  </body>
+</html>

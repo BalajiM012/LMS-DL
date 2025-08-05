@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>AI Book Recommendations - TensorFlow</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.10.0/dist/tf.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        color: #333;
+      }
+
+      .header {
+        background: rgba(255, 255, 255, 0.1);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        padding: 30px 0;
+        text-align: center;
+        box-shadow: 0 2px 20px rgba(0, 0, 0, 0.1);
+      }
+
+      .welcome-title {
+        font-size: 3rem;
+        font-weight: bold;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+        margin-bottom: 10px;
+      }
+
+      .lms-full-name {
+        font-size: 1.5rem;
+        color: white;
+        font-weight: 500;
+        margin-bottom: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 40px 20px;
+      }
+
+      .recommendations-section {
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(10px);
+        -webkit-backdrop-filter: blur(10px);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+      }
+
+      .section-title {
+        font-size: 2.5rem;
+        color: #333;
+        margin-bottom: 30px;
+        text-align: center;
+      }
+
+      .ai-status {
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .status-indicator {
+        display: inline-block;
+        padding: 10px 20px;
+        border-radius: 25px;
+        font-weight: 600;
+        margin: 5px;
+      }
+
+      .status-loading {
+        background-color: #ffc107;
+        color: #212529;
+      }
+
+      .status-ready {
+        background-color: #28a745;
+        color: white;
+      }
+
+      .status-error {
+        background-color: #dc3545;
+        color: white;
+      }
+
+      .preferences-section {
+        margin-bottom: 40px;
+      }
+
+      .preference-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 20px;
+        margin-bottom: 20px;
+      }
+
+      .preference-card {
+        background: #f8f9fa;
+        padding: 20px;
+        border-radius: 15px;
+        text-align: center;
+      }
+
+      .preference-title {
+        font-size: 1.2rem;
+        font-weight: 600;
+        margin-bottom: 15px;
+        color: #333;
+      }
+
+      .genre-buttons {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 10px;
+        justify-content: center;
+      }
+
+      .genre-btn {
+        padding: 8px 16px;
+        border: 2px solid #667eea;
+        background: white;
+        color: #667eea;
+        border-radius: 20px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .genre-btn.active {
+        background: #667eea;
+        color: white;
+      }
+
+      .recommend-btn {
+        display: block;
+        margin: 30px auto;
+        padding: 15px 40px;
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        color: white;
+        border: none;
+        border-radius: 25px;
+        font-size: 1.1rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+      }
+
+      .recommend-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+      }
+
+      .recommendations-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 30px;
+        margin-top: 40px;
+      }
+
+      .book-card {
+        background: white;
+        border-radius: 15px;
+        padding: 30px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease;
+      }
+
+      .book-card:hover {
+        transform: translateY(-5px);
+      }
+
+      .book-title {
+        font-size: 1.3rem;
+        font-weight: bold;
+        color: #333;
+        margin-bottom: 10px;
+      }
+
+      .book-author {
+        color: #666;
+        margin-bottom: 10px;
+      }
+
+      .book-genre {
+        display: inline-block;
+        background: #667eea;
+        color: white;
+        padding: 5px 10px;
+        border-radius: 15px;
+        font-size: 0.9rem;
+        margin-bottom: 10px;
+      }
+
+      .book-rating {
+        color: #ffc107;
+        margin-bottom: 10px;
+      }
+
+      .book-description {
+        color: #666;
+        line-height: 1.6;
+        margin-bottom: 15px;
+      }
+
+      .confidence-score {
+        background: #f8f9fa;
+        padding: 10px;
+        border-radius: 10px;
+        text-align: center;
+        font-weight: 600;
+        color: #667eea;
+      }
+
+      .back-btn {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        background: rgba(255, 255, 255, 0.2);
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 20px;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background 0.3s ease;
+      }
+
+      .back-btn:hover {
+        background: rgba(255, 255, 255, 0.3);
+      }
+
+      .loading-spinner {
+        display: none;
+        text-align: center;
+        margin: 40px 0;
+      }
+
+      .spinner {
+        border: 4px solid #f3f3f3;
+        border-top: 4px solid #667eea;
+        border-radius: 50%;
+        width: 50px;
+        height: 50px;
+        animation: spin 1s linear infinite;
+        margin: 0 auto;
+      }
+
+      @keyframes spin {
+        0% {
+          transform: rotate(0deg);
+        }
+        100% {
+          transform: rotate(360deg);
+        }
+      }
+
+      @media (max-width: 768px) {
+        .welcome-title {
+          font-size: 2rem;
+        }
+
+        .preference-grid {
+          grid-template-columns: 1fr;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1 class="welcome-title">Welcome to LMS Website</h1>
+      <p class="lms-full-name">Library Management System</p>
+      <a href="student-dashboard-enhanced.html" class="back-btn"
+        >← Back to Dashboard</a
+      >
+    </div>
+
+    <div class="container">
+      <div class="recommendations-section">
+        <h2 class="section-title">AI Book Recommendations</h2>
+
+        <div class="ai-status">
+          <div class="status-indicator status-loading" id="aiStatus">
+            Loading TensorFlow AI...
+          </div>
+        </div>
+
+        <div class="preferences-section">
+          <h3>Select Your Preferences:</h3>
+          <div class="preference-grid">
+            <div class="preference-card">
+              <div class="preference-title">Favorite Genres</div>
+              <div class="genre-buttons">
+                <button class="genre-btn" data-genre="fiction">Fiction</button>
+                <button class="genre-btn" data-genre="mystery">Mystery</button>
+                <button class="genre-btn" data-genre="romance">Romance</button>
+                <button class="genre-btn" data-genre="scifi">Sci-Fi</button>
+                <button class="genre-btn" data-genre="fantasy">Fantasy</button>
+                <button class="genre-btn" data-genre="biography">
+                  Biography
+                </button>
+                <button class="genre-btn" data-genre="history">History</button>
+                <button class="genre-btn" data-genre="self-help">
+                  Self-Help
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <button class="recommend-btn" onclick="getRecommendations()">
+          Get AI Recommendations
+        </button>
+
+        <div class="loading-spinner" id="loadingSpinner">
+          <div class="spinner"></div>
+          <p>AI is analyzing your preferences...</p>
+        </div>
+
+        <div class="recommendations-grid" id="recommendationsGrid">
+          <!-- Recommendations will be populated here -->
+        </div>
+      </div>
+    </div>
+
+    <script>
+      // Sample book dataset
+      const bookDataset = [
+        {
+          title: "The Great Gatsby",
+          author: "F. Scott Fitzgerald",
+          genre: "fiction",
+          rating: 4.5,
+          description: "A classic American novel set in the Jazz Age.",
+          features: [0.8, 0.2, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1],
+        },
+        {
+          title: "To Kill a Mockingbird",
+          author: "Harper Lee",
+          genre: "fiction",
+          rating: 4.8,
+          description:
+            "A gripping tale of racial injustice and childhood innocence.",
+          features: [0.9, 0.3, 0.1, 0.1, 0.1, 0.1, 0.2, 0.1],
+        },
+        {
+          title: "1984",
+          author: "George Orwell",
+          genre: "scifi",
+          rating: 4.7,
+          description: "A dystopian social science fiction novel.",
+          features: [0.7, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1],
+        },
+        {
+          title: "Pride and Prejudice",
+          author: "Jane Austen",
+          genre: "romance",
+          rating: 4.6,
+          description: "A romantic novel of manners.",
+          features: [0.8, 0.1, 0.9, 0.1, 0.1, 0.1, 0.1, 0.1],
+        },
+        {
+          title: "The Hobbit",
+          author: "J.R.R. Tolkien",
+          genre: "fantasy",
+          rating: 4.9,
+          description: "A fantasy novel and children's book.",
+          features: [0.6, 0.1, 0.1, 0.1, 0.9, 0.1, 0.1, 0.1],
+        },
+        {
+          title: "Steve Jobs",
+          author: "Walter Isaacson",
+          genre: "biography",
+          rating: 4.4,
+          description: "The exclusive biography of Steve Jobs.",
+          features: [0.5, 0.1, 0.1, 0.1, 0.1, 0.9, 0.1, 0.1],
+        },
+        {
+          title: "Sapiens",
+          author: "Yuval Noah Harari",
+          genre: "history",
+          rating: 4.6,
+          description: "A brief history of humankind.",
+          features: [0.4, 0.1, 0.1, 0.1, 0.1, 0.1, 0.9, 0.1],
+        },
+        {
+          title: "Atomic Habits",
+          author: "James Clear",
+          genre: "self-help",
+          rating: 4.7,
+          description: "An easy & proven way to build good habits.",
+          features: [0.3, 0.1, 0.1, 0.1, 0.1, 0.1, 0.1, 0.9],
+        },
+      ];
+
+      let selectedGenres = [];
+      let model;
+
+      // Initialize TensorFlow
+      async function initTensorFlow() {
+        try {
+          document.getElementById("aiStatus").textContent =
+            "TensorFlow AI Ready!";
+          document.getElementById("aiStatus").className =
+            "status-indicator status-ready";
+        } catch (error) {
+          document.getElementById("aiStatus").textContent = "AI Loading Failed";
+          document.getElementById("aiStatus").className =
+            "status-indicator status-error";
+        }
+      }
+
+      // Genre selection
+      document.querySelectorAll(".genre-btn").forEach((btn) => {
+        btn.addEventListener("click", function () {
+          this.classList.toggle("active");
+          const genre = this.dataset.genre;
+
+          if (this.classList.contains("active")) {
+            selectedGenres.push(genre);
+          } else {
+            selectedGenres = selectedGenres.filter((g) => g !== genre);
+          }
+        });
+      });
+
+      // Simple recommendation algorithm
+      function getRecommendations() {
+        if (selectedGenres.length === 0) {
+          alert("Please select at least one genre preference!");
+          return;
+        }
+
+        document.getElementById("loadingSpinner").style.display = "block";
+        document.getElementById("recommendationsGrid").innerHTML = "";
+
+        setTimeout(() => {
+          const recommendations = generateRecommendations();
+          displayRecommendations(recommendations);
+          document.getElementById("loadingSpinner").style.display = "none";
+        }, 2000);
+      }
+
+      function generateRecommendations() {
+        // Simple AI recommendation based on genre preferences
+        const genreWeights = {};
+        selectedGenres.forEach((genre) => {
+          genreWeights[genre] = 1;
+        });
+
+        return bookDataset
+          .map((book) => {
+            let score = book.rating;
+
+            // Boost score for selected genres
+            if (selectedGenres.includes(book.genre)) {
+              score += 1.5;
+            }
+
+            // Add some randomness for variety
+            score += Math.random() * 0.5;
+
+            return {
+              ...book,
+              confidence: Math.min(score / 6, 1),
+            };
+          })
+          .sort((a, b) => b.confidence - a.confidence)
+          .slice(0, 6);
+      }
+
+      function displayRecommendations(recommendations) {
+        const grid = document.getElementById("recommendationsGrid");
+        grid.innerHTML = "";
+
+        recommendations.forEach((book) => {
+          const card = document.createElement("div");
+          card.className = "book-card";
+
+          card.innerHTML = `
+            <div class="book-title">${book.title}</div>
+            <div class="book-author">by ${book.author}</div>
+            <div class="book-genre">${book.genre}</div>
+            <div class="book-rating">⭐ ${book.rating}/5</div>
+            <div class="book-description">${book.description}</div>
+            <div class="confidence-score">
+              AI Confidence: ${(book.confidence * 100).toFixed(1)}%
+            </div>
+          `;
+
+          grid.appendChild(card);
+        });
+      }
+
+      // Initialize on page load
+      document.addEventListener("DOMContentLoaded", initTensorFlow);
+    </script>
+  </body>
+</html>

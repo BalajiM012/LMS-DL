@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users - Library Management System</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            color: #333;
+        }
+
+        .header {
+            background: rgba(255, 255, 255, 0.1);
+            -webkit-backdrop-filter: blur(10px);
+            backdrop-filter: blur(10px);
+            padding: 20px 0;
+            text-align: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: relative;
+        }
+
+        .welcome-title {
+            font-size: 2.5rem;
+            font-weight: bold;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            -webkit-background-clip: text;
+            background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 5px;
+        }
+
+        .lms-full-name {
+            font-size: 1.2rem;
+            color: white;
+            font-weight: 500;
+        }
+
+        .user-info {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            color: white;
+            font-weight: 600;
+            display: flex;
+            gap: 10px;
+            align-items: center;
+        }
+
+        .nav-buttons {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            display: flex;
+            gap: 10px;
+        }
+
+        .nav-btn {
+            background: rgba(255, 255, 255, 0.2);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background 0.3s ease;
+            font-size: 14px;
+        }
+
+        .nav-btn:hover {
+            background: rgba(255, 255, 255, 0.3);
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 40px 20px;
+        }
+
+        .users-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 40px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .users-title {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 30px;
+            color: #333;
+            text-align: center;
+        }
+
+        .username-display {
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            padding: 15px 30px;
+            border-radius: 25px;
+            margin: 20px auto;
+            display: inline-block;
+            font-weight: 600;
+            text-align: center;
+        }
+
+        .stats-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 20px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            text-align: center;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 20px;
+        }
+
+        .stat-card {
+            text-align: center;
+            padding: 15px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border-radius: 15px;
+        }
+
+        .stat-number {
+            font-size: 1.5rem;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .controls-section {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            margin-bottom: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls-grid {
+            display: grid;
+            grid-template-columns: 1fr auto auto;
+            gap: 15px;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .search-input {
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .control-btn {
+            padding: 15px 30px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: transform 0.3s ease;
+        }
+
+        .control-btn:hover {
+            transform: translateY(-2px);
+        }
+
+        .add-btn {
+            background: linear-gradient(135deg, #28a745, #20c997);
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .filter-select {
+            padding: 10px 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .users-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 30px;
+            margin-top: 40px;
+        }
+
+        .user-card {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            -webkit-backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .user-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .user-avatar {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 2rem;
+            margin: 0 auto 20px;
+        }
+
+        .user-name {
+            font-size: 1.3rem;
+            font-weight: bold;
+            margin-bottom: 10px;
+            color: #333;
+            text-align: center;
+        }
+
+        .user-details {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .detail-item {
+            padding: 10px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        .detail-label {
+            font-size: 0.8rem;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .detail-value {
+            font-weight: bold;
+            color: #333;
+        }
+
+        .user-status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: bold;
+            margin: 10px 0;
+        }
+
+        .status-active {
+            background: #d4edda;
+            color: #155724;
+        }
+
+        .status-inactive {
+            background: #f8d7da;
+            color: #721c24;
+        }
+
+        .status-suspended {
+            background: #fff3cd;
+            color: #856404;
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .action-btn {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .edit-btn {
+            background: #ffc107;
+            color: #000;
+        }
+
+        .delete-btn {
+            background: #dc3545;
+            color: white;
+        }
+
+        .view-btn {
+            background: #17a2b8;
+            color: white;
+        }
+
+        .action-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .no-users {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin-top: 40px;
+        }
+
+        .loading {
+            text-align: center;
+            color: #666;
+            font-size: 1.2rem;
+            margin-top: 40px;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 2000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 600px;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .close:hover {
+            color: #000;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: border-color 0.3s ease;
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .form-select {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e0e0e0;
+            border-radius: 8px;
+            font-size: 16px;
+        }
+
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            margin-top: 30px;
+        }
+
+        .page-btn {
+            padding: 10px 15px;
+            border: 2px solid #667eea;
+            background: white;
+            color: #667eea;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .page-btn:hover,
+        .page-btn.active {
+            background: #667eea;
+            color: white;
+        }
+
+        .page-info {
+            color: #666;
+            font-size: 0.9rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1 class="welcome-title">Welcome to Library Management System</h1>
+        <p class="lms-full-name">User Management & Administration Portal</p>
+        <div class="user-info">
+            <span id="userName">Admin User</span>
+        </div>
+        <div class="nav-buttons">
+            <a href="index.html" class="nav-btn">🏠 Home</a>
+            <button class="nav-btn" onclick="logout()">🚪 Logout</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="users-section">
+            <h2 class="users-title">Manage Users - User Administration</h2>
+            <div class="username-display" id="userWelcome">Welcome, Admin</div>
+        </div>
+
+        <div class="stats-section">
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-number" id="totalUsers">0</div>
+                    <div class="stat-label">Total Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="activeUsers">0</div>
+                    <div class="stat-label">Active Users</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="studentUsers">0</div>
+                    <div class="stat-label">Students</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="adminUsers">0</div>
+                    <div class="stat-label">Admins</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="suspendedUsers">0</div>
+                    <div class="stat-label">Suspended</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-number" id="newUsers">0</div>
+                    <div class="stat-label">New This Month</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="controls-section">
+            <div class="controls-grid">
+                <input type="text" class="search-input" id="searchInput" placeholder="Search users by name, email, or ID...">
+                <button class="control-btn" onclick="searchUsers()">🔍 Search</button>
+                <button class="control-btn add-btn" onclick="openAddUserModal()">➕ Add User</button>
+            </div>
+            
+            <div class="filter-section">
+                <select class="filter-select" id="roleFilter" onchange="filterUsers()">
+                    <option value="">All Roles</option>
+                    <option value="student">Students</option>
+                    <option value="admin">Admins</option>
+                    <option value="librarian">Librarians</option>
+                </select>
+                
+                <select class="filter-select" id="statusFilter" onchange="filterUsers()">
+                    <option value="">All Status</option>
+                    <option value="active">Active</option>
+                    <option value="inactive">Inactive</option>
+                    <option value="suspended">Suspended</option>
+                </select>
+                
+                <button class="control-btn" onclick="clearFilters()">Clear Filters</button>
+                <button class="control-btn" onclick="exportUsers()">📊 Export</button>
+            </div>
+        </div>
+
+        <div id="loading" class="loading" style="display: none;">Loading users...</div>
+        <div id="usersContainer" class="users-grid"></div>
+        <div id="noUsers" class="no-users" style="display: none;">No users found.</div>
+
+        <div class="pagination" id="pagination" style="display: none;">
+            <button class="page-btn" onclick="previousPage()">← Previous</button>
+            <span class="page-info" id="pageInfo">Page 1 of 1</span>
+            <button class="page-btn" onclick="nextPage()">Next →</button>
+        </div>
+    </div>
+
+    <!-- Add/Edit User Modal -->
+    <div id="userModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h2 id="modalTitle">Add New User</h2>
+            <form id="userForm">
+                <div class="form-group">
+                    <label class="form-label" for="fullName">Full Name</label>
+                    <input type="text" class="form-input" id="fullName" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="email">Email</label>
+                    <input type="email" class="form-input" id="email" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="username">Username</label>
+                    <input type="text" class="form-input" id="username" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="password">Password</label>
+                    <input type="password" class="form-input" id="password" required>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="role">Role</label>
+                    <select class="form-select" id="role" required>
+                        <option value="">Select Role</option>
+                        <option value="student">Student</option>
+                        <option value="admin">Admin</option>
+                        <option value="librarian">Librarian</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="status">Status</label>
+                    <select class="form-select" id="status" required>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="phone">Phone Number</label>
+                    <input type="tel" class="form-input" id="phone">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label" for="address">Address</label>
+                    <input type="text" class="form-input" id="address">
+                </div>
+                
+                <button type="submit" class="control-btn">Save User</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Complete user management dataset
+        const usersDataset = [
+            {
+                id: 1,
+                fullName: "John Smith",
+                email: "john.smith@email.com",
+                username: "johnsmith",
+                role: "student",
+                status: "active",
+                phone: "+1-555-0123",
+                address: "123 Main St, City, State",
+                joinDate: "2024-01-15",
+                lastLogin: "2024-01-20",
+                booksCount: 3,
+                finesAmount: 0
+            },
+            {
+                id: 2,
+                fullName: "Sarah Johnson",
+                email: "sarah.johnson@email.com",
+                username: "sarahj",
+                role: "admin",
+                status: "active",
+                phone: "+1-555-0124",
+                address: "456 Oak Ave, City, State",
+                joinDate: "2023-12-01",
+                lastLogin: "2024-01-21",
+                booksCount: 0,
+                finesAmount: 0
+            },
+            {
+                id: 3,
+                fullName: "Michael Brown",
+                email: "michael.brown@email.com",
+                username: "mikebrown",
+                role: "student",
+                status: "active",
+                phone: "+1-555-0125",
+                address: "789 Pine St, City, State",
+                joinDate: "2024-01-10",
+                lastLogin: "2024-01-19",
+                booksCount: 5,
+                finesAmount: 2.50
+            },
+            {
+                id: 4,
+                fullName: "Emily Davis",
+                email: "emily.davis@email.com",
+                username: "emilyd",
+                role: "librarian",
+                status: "active",
+                phone: "+1-555-0126",
+                address: "321 Elm St, City, State",
+                joinDate: "2023-11-15",
+                lastLogin: "2024-01-21",
+                booksCount: 1,
+                finesAmount: 0
+            },
+            {
+                id: 5,
+                fullName: "David Wilson",
+                email: "david.wilson@email.com",
+                username: "davidw",
+                role: "student",
+                status: "suspended",
+                phone: "+1-555-0127",
+                address: "654 Maple Ave, City, State",
+                joinDate: "2023-10-20",
+                lastLogin: "2024-01-15",
+                booksCount: 2,
+                finesAmount: 15.00
+            },
+            {
+                id: 6,
+                fullName: "Lisa Anderson",
+                email: "lisa.anderson@email.com",
+                username: "lisaa",
+                role: "student",
+                status: "active",
+                phone: "+1-555-0128",
+                address: "987 Cedar St, City, State",
+                joinDate: "2024-01-05",
+                lastLogin: "2024-01-20",
+                booksCount: 4,
+                finesAmount: 1.00
+            },
+            {
+                id: 7,
+                fullName: "Robert Taylor",
+                email: "robert.taylor@email.com",
+                username: "robt",
+                role: "admin",
+                status: "active",
+                phone: "+1-555-0129",
+                address: "147 Birch Ln, City, State",
+                joinDate: "2023-09-01",
+                lastLogin: "2024-01-21",
+                booksCount: 0,
+                finesAmount: 0
+            },
+            {
+                id: 8,
+                fullName: "Jennifer Martinez",
+                email: "jennifer.martinez@email.com",
+                username: "jennm",
+                role: "student",
+                status: "inactive",
+                phone: "+1-555-0130",
+                address: "258 Spruce St, City, State",
+                joinDate: "2023-08-15",
+                lastLogin: "2023-12-10",
+                booksCount: 0,
+                finesAmount: 0
+            },
+            {
+                id: 9,
+                fullName: "Christopher Lee",
+                email: "christopher.lee@email.com",
+                username: "chrisl",
+                role: "student",
+                status: "active",
+                phone: "+1-555-0131",
+                address: "369 Willow Dr, City, State",
+                joinDate: "2024-01-12",
+                lastLogin: "2024-01-21",
+                booksCount: 2,
+                finesAmount: 0
+            },
+            {
+                id: 10,
+                fullName: "Amanda White",
+                email: "amanda.white@email.com",
+                username: "amandaw",
+                role: "librarian",
+                status: "active",
+                phone: "+1-555-0132",
+                address: "741 Poplar Ave, City, State",
+                joinDate: "2023-07-01",
+                lastLogin: "2024-01-20",
+                booksCount: 3,
+                finesAmount: 0
+            }
+        ];
+
+        let filteredUsers = [...usersDataset];
+        let currentPage = 1;
+        const usersPerPage = 6;
+        let editingUserId = null;
+
+        // Load user info and initialize
+        function loadUserInfo() {
+            const user = JSON.parse(sessionStorage.getItem('user') || '{}');
+            if (user.fullname) {
+                document.getElementById('userName').textContent = user.fullname;
+                document.getElementById('userWelcome').textContent = `Welcome, ${user.fullname}`;
+            }
+            loadStats();
+            displayUsers(filteredUsers);
+        }
+
+        // Load statistics
+        function loadStats() {
+            const totalUsers = usersDataset.length;
+            const activeUsers = usersDataset.filter(user => user.status === 'active').length;
+            const studentUsers = usersDataset.filter(user => user.role === 'student').length;
+            const adminUsers = usersDataset.filter(user => user.role === 'admin').length;
+            const suspendedUsers = usersDataset.filter(user => user.status === 'suspended').length;
+            const newUsers = usersDataset.filter(user => {
+                const joinDate = new Date(user.joinDate);
+                const oneMonthAgo = new Date();
+                oneMonthAgo.setMonth(oneMonthAgo.getMonth() - 1);
+                return joinDate >= oneMonthAgo;
+            }).length;
+            
+            document.getElementById('totalUsers').textContent = totalUsers;
+            document.getElementById('activeUsers').textContent = activeUsers;
+            document.getElementById('studentUsers').textContent = studentUsers;
+            document.getElementById('adminUsers').textContent = adminUsers;
+            document.getElementById('suspendedUsers').textContent = suspendedUsers;
+            document.getElementById('newUsers').textContent = newUsers;
+        }
+
+        // Format date
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toLocaleDateString('en-US', { 
+                year: 'numeric', 
+                month: 'short', 
+                day: 'numeric' 
+            });
+        }
+
+        // Get user avatar initials
+        function getUserInitials(fullName) {
+            return fullName.split(' ').map(name => name[0]).join('').toUpperCase();
+        }
+
+        // Display users
+        function displayUsers(users) {
+            const container = document.getElementById('usersContainer');
+            const noUsers = document.getElementById('noUsers');
+            
+            if (users.length === 0) {
+                container.innerHTML = '';
+                noUsers.style.display = 'block';
+                document.getElementById('pagination').style.display = 'none';
+                return;
+            }
+            
+            noUsers.style.display = 'none';
+            
+            // Pagination
+            const startIndex = (currentPage - 1) * usersPerPage;
+            const endIndex = startIndex + usersPerPage;
+            const paginatedUsers = users.slice(startIndex, endIndex);
+            
+            container.innerHTML = paginatedUsers.map(user => {
+                const statusClass = `status-${user.status}`;
+                const initials = getUserInitials(user.fullName);
+                
+                return `
+                    <div class="user-card">
+                        <div class="user-avatar">${initials}</div>
+                        <h3 class="user-name">${user.fullName}</h3>
+                        <div class="user-status ${statusClass}">${user.status.toUpperCase()}</div>
+                        
+                        <div class="user-details">
+                            <div class="detail-item">
+                                <div class="detail-label">Email</div>
+                                <div class="detail-value">${user.email}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Role</div>
+                                <div class="detail-value">${user.role.toUpperCase()}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Join Date</div>
+                                <div class="detail-value">${formatDate(user.joinDate)}</div>
+                            </div>
+                            <div class="detail-item">
+                                <div class="detail-label">Books</div>
+                                <div class="detail-value">${user.booksCount}</div>
+                            </div>
+                        </div>
+                        
+                        <div class="user-actions">
+                            <button class="action-btn view-btn" onclick="viewUser(${user.id})">View</button>
+                            <button class="action-btn edit-btn" onclick="editUser(${user.id})">Edit</button>
+                            <button class="action-btn delete-btn" onclick="deleteUser(${user.id})">Delete</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+            
+            // Update pagination
+            updatePagination(users.length);
+        }
+
+        // Update pagination
+        function updatePagination(totalUsers) {
+            const totalPages = Math.ceil(totalUsers / usersPerPage);
+            const pagination = document.getElementById('pagination');
+            const pageInfo = document.getElementById('pageInfo');
+            
+            if (totalPages <= 1) {
+                pagination.style.display = 'none';
+                return;
+            }
+            
+            pagination.style.display = 'flex';
+            pageInfo.textContent = `Page ${currentPage} of ${totalPages}`;
+        }
+
+        // Pagination functions
+        function previousPage() {
+            if (currentPage > 1) {
+                currentPage--;
+                displayUsers(filteredUsers);
+            }
+        }
+
+        function nextPage() {
+            const totalPages = Math.ceil(filteredUsers.length / usersPerPage);
+            if (currentPage < totalPages) {
+                currentPage++;
+                displayUsers(filteredUsers);
+            }
+        }
+
+        // Search functionality
+        function searchUsers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            
+            filteredUsers = usersDataset.filter(user => {
+                return !searchTerm || 
+                    user.fullName.toLowerCase().includes(searchTerm) ||
+                    user.email.toLowerCase().includes(searchTerm) ||
+                    user.username.toLowerCase().includes(searchTerm) ||
+                    user.id.toString().includes(searchTerm);
+            });
+            
+            currentPage = 1;
+            displayUsers(filteredUsers);
+        }
+
+        // Filter functionality
+        function filterUsers() {
+            const roleFilter = document.getElementById('roleFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            filteredUsers = usersDataset.filter(user => {
+                const roleMatch = !roleFilter || user.role === roleFilter;
+                const statusMatch = !statusFilter || user.status === statusFilter;
+                return roleMatch && statusMatch;
+            });
+            
+            currentPage = 1;
+            displayUsers(filteredUsers);
+        }
+
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            document.getElementById('roleFilter').value = '';
+            document.getElementById('statusFilter').value = '';
+            filteredUsers = [...usersDataset];
+            currentPage = 1;
+            displayUsers(filteredUsers);
+        }
+
+        // User actions
+        function viewUser(userId) {
+            const user = usersDataset.find(u => u.id === userId);
+            if (!user) return;
+            
+            alert(`User Details:
+Name: ${user.fullName}
+Email: ${user.email}
+Role: ${user.role}
+Status: ${user.status}
+Phone: ${user.phone}
+Address: ${user.address}
+Join Date: ${formatDate(user.joinDate)}
+Last Login: ${formatDate(user.lastLogin)}
+Books Borrowed: ${user.booksCount}
+Outstanding Fines: $${user.finesAmount.toFixed(2)}`);
+        }
+
+        function editUser(userId) {
+            const user = usersDataset.find(u => u.id === userId);
+            if (!user) return;
+            
+            editingUserId = userId;
+            document.getElementById('modalTitle').textContent = 'Edit User';
+            document.getElementById('fullName').value = user.fullName;
+            document.getElementById('email').value = user.email;
+            document.getElementById('username').value = user.username;
+            document.getElementById('password').value = '';
+            document.getElementById('role').value = user.role;
+            document.getElementById('status').value = user.status;
+            document.getElementById('phone').value = user.phone;
+            document.getElementById('address').value = user.address;
+            
+            document.getElementById('userModal').style.display = 'block';
+        }
+
+        function deleteUser(userId) {
+            const user = usersDataset.find(u => u.id === userId);
+            if (!user) return;
+            
+            if (confirm(`Are you sure you want to delete user "${user.fullName}"?`)) {
+                const index = usersDataset.findIndex(u => u.id === userId);
+                if (index > -1) {
+                    usersDataset.splice(index, 1);
+                    filteredUsers = filteredUsers.filter(u => u.id !== userId);
+                    loadStats();
+                    displayUsers(filteredUsers);
+                    alert('User deleted successfully!');
+                }
+            }
+        }
+
+        // Modal functions
+        function openAddUserModal() {
+            editingUserId = null;
+            document.getElementById('modalTitle').textContent = 'Add New User';
+            document.getElementById('userForm').reset();
+            document.getElementById('userModal').style.display = 'block';
+        }
+
+        function closeModal() {
+            document.getElementById('userModal').style.display = 'none';
+            editingUserId = null;
+        }
+
+        // Form submission
+        document.getElementById('userForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            const formData = {
+                fullName: document.getElementById('fullName').value,
+                email: document.getElementById('email').value,
+                username: document.getElementById('username').value,
+                password: document.getElementById('password').value,
+                role: document.getElementById('role').value,
+                status: document.getElementById('status').value,
+                phone: document.getElementById('phone').value,
+                address: document.getElementById('address').value
+            };
+            
+            if (editingUserId) {
+                // Edit existing user
+                const userIndex = usersDataset.findIndex(u => u.id === editingUserId);
+                if (userIndex > -1) {
+                    usersDataset[userIndex] = {
+                        ...usersDataset[userIndex],
+                        ...formData
+                    };
+                    alert('User updated successfully!');
+                }
+            } else {
+                // Add new user
+                const newUser = {
+                    id: Math.max(...usersDataset.map(u => u.id)) + 1,
+                    ...formData,
+                    joinDate: new Date().toISOString().split('T')[0],
+                    lastLogin: new Date().toISOString().split('T')[0],
+                    booksCount: 0,
+                    finesAmount: 0
+                };
+                usersDataset.push(newUser);
+                alert('User added successfully!');
+            }
+            
+            closeModal();
+            filteredUsers = [...usersDataset];
+            loadStats();
+            displayUsers(filteredUsers);
+        });
+
+        // Export users
+        function exportUsers() {
+            const csvContent = "data:text/csv;charset=utf-8," 
+                + "ID,Name,Email,Username,Role,Status,Phone,Address,Join Date,Last Login,Books,Fines\n"
+                + usersDataset.map(user => 
+                    `${user.id},"${user.fullName}","${user.email}","${user.username}","${user.role}","${user.status}","${user.phone}","${user.address}","${user.joinDate}","${user.lastLogin}",${user.booksCount},${user.finesAmount}`
+                ).join("\n");
+            
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", "users_export.csv");
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // Authentication and logout functionality
+        async function logout() {
+            try {
+                const response = await fetch('/api/auth/logout', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    sessionStorage.removeItem('user');
+                    localStorage.removeItem('user');
+                    window.location.href = "index.html";
+                } else {
+                    alert('Logout failed. Redirecting to home page...');
+                    window.location.href = "index.html";
+                }
+            } catch (error) {
+                console.error('Logout error:', error);
+                sessionStorage.removeItem('user');
+                localStorage.removeItem('user');
+                window.location.href = "index.html";
+            }
+        }
+
+        // Check authentication on page load
+        window.addEventListener('load', async function() {
+            try {
+                const response = await fetch('/api/auth/check-auth');
+                if (!response.ok) {
+                    alert('Please log in to access this page.');
+                    window.location.href = "index.html";
+                    return;
+                }
+                
+                const authData = await response.json();
+                if (!authData.authenticated) {
+                    alert('Please log in to access this page.');
+                    window.location.href = "index.html";
+                    return;
+                }
+                
+                // Load user info from auth response
+                if (authData.user) {
+                    document.getElementById('userName').textContent = authData.user.fullname || authData.user.username;
+                    document.getElementById('userWelcome').textContent = `Welcome, ${authData.user.fullname || authData.user.username}`;
+                }
+                
+                loadUserInfo();
+            } catch (error) {
+                console.error('Authentication check failed:', error);
+                alert('Authentication failed. Please log in again.');
+                window.location.href = "index.html";
+            }
+        });
+
+        // Handle search on Enter key
+        document.getElementById('searchInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                searchUsers();
+            }
+        });
+
+        // Close modal when clicking outside
+        window.onclick = function(event) {
+            const modal = document.getElementById('userModal');
+            if (event.target == modal) {
+                closeModal();
+            }
+        };
+
+        // Load initial data
+        loadUserInfo();
+    </script>
+</body>
+</html>

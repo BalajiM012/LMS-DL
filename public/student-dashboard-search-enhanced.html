@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Dashboard - Enhanced Search</title>
+    <link rel="stylesheet" href="index.css" />
+    <style>
+      .search-filters {
+        display: flex;
+        gap: 15px;
+        margin: 20px 0;
+        flex-wrap: wrap;
+      }
+
+      .filter-group {
+        display: flex;
+        flex-direction: column;
+        min-width: 150px;
+      }
+
+      .filter-label {
+        font-weight: bold;
+        margin-bottom: 5px;
+        color: #333;
+      }
+
+      .filter-select {
+        padding: 8px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+      }
+
+      .search-results {
+        margin-top: 30px;
+      }
+
+      .book-card {
+        background: white;
+        border-radius: 10px;
+        padding: 20px;
+        margin: 10px 0;
+        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .book-info h3 {
+        margin: 0 0 10px 0;
+        color: #333;
+      }
+
+      .book-info p {
+        margin: 5px 0;
+        color: #666;
+      }
+
+      .book-actions button {
+        background: #667eea;
+        color: white;
+        border: none;
+        padding: 10px 20px;
+        border-radius: 5px;
+        cursor: pointer;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="header">
+      <h1>Welcome to Library Management System Website</h1>
+      <p>Student Dashboard - Enhanced Search</p>
+    </div>
+
+    <div class="container">
+      <div class="search-section">
+        <h2>Advanced Book Search</h2>
+        <div class="search-filters">
+          <div class="filter-group">
+            <label class="filter-label">Search Term</label>
+            <input
+              type="text"
+              id="searchTerm"
+              placeholder="Enter title, author, or ISBN"
+            />
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Genre</label>
+            <select
+              class="filter-select"
+              id="genreFilter"
+              title="Select book genre"
+            >
+              <option value="">All Genres</option>
+              <option value="fiction">Fiction</option>
+              <option value="non-fiction">Non-Fiction</option>
+              <option value="science">Science</option>
+              <option value="history">History</option>
+              <option value="technology">Technology</option>
+            </select>
+          </div>
+          <div class="filter-group">
+            <label class="filter-label">Availability</label>
+            <select
+              class="filter-select"
+              id="availabilityFilter"
+              title="Select book availability"
+            >
+              <option value="">All</option>
+              <option value="available">Available</option>
+              <option value="borrowed">Borrowed</option>
+            </select>
+          </div>
+        </div>
+        <button onclick="performSearch()">Search Books</button>
+      </div>
+
+      <div class="search-results" id="searchResults">
+        <!-- Search results will be populated here -->
+      </div>
+
+      <div class="features-grid">
+        <div
+          class="feature-card"
+          onclick="window.location.href='get-book-enhanced.html'"
+        >
+          <h3>Get Book</h3>
+          <p>Browse available books</p>
+        </div>
+        <div
+          class="feature-card"
+          onclick="window.location.href='borrow-book-enhanced.html'"
+        >
+          <h3>Borrow Book</h3>
+          <p>Check out books</p>
+        </div>
+        <div
+          class="feature-card"
+          onclick="window.location.href='submit-book-enhanced.html'"
+        >
+          <h3>Submit Book</h3>
+          <p>Return borrowed books</p>
+        </div>
+        <div
+          class="feature-card"
+          onclick="window.location.href='history-enhanced.html'"
+        >
+          <h3>History</h3>
+          <p>View borrowing history</p>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function performSearch() {
+        const term = document.getElementById("searchTerm").value;
+        const genre = document.getElementById("genreFilter").value;
+        const availability =
+          document.getElementById("availabilityFilter").value;
+
+        // Simulate search results
+        const results = [
+          {
+            title: "The Great Gatsby",
+            author: "F. Scott Fitzgerald",
+            genre: "fiction",
+            available: true,
+          },
+          {
+            title: "1984",
+            author: "George Orwell",
+            genre: "fiction",
+            available: false,
+          },
+          {
+            title: "Clean Code",
+            author: "Robert Martin",
+            genre: "technology",
+            available: true,
+          },
+        ];
+
+        displayResults(
+          results.filter((book) => {
+            const matchesTerm =
+              !term ||
+              book.title.toLowerCase().includes(term.toLowerCase()) ||
+              book.author.toLowerCase().includes(term.toLowerCase());
+            const matchesGenre = !genre || book.genre === genre;
+            const matchesAvailability =
+              !availability ||
+              (availability === "available" ? book.available : !book.available);
+
+            return matchesTerm && matchesGenre && matchesAvailability;
+          })
+        );
+      }
+
+      function displayResults(books) {
+        const container = document.getElementById("searchResults");
+        container.innerHTML = "";
+
+        if (books.length === 0) {
+          container.innerHTML = "<p>No books found matching your criteria.</p>";
+          return;
+        }
+
+        books.forEach((book) => {
+          const card = document.createElement("div");
+          card.className = "book-card";
+          card.innerHTML = `
+                    <div class="book-info">
+                        <h3>${book.title}</h3>
+                        <p><strong>Author:</strong> ${book.author}</p>
+                        <p><strong>Genre:</strong> ${book.genre}</p>
+                        <p><strong>Status:</strong> ${
+                          book.available ? "Available" : "Borrowed"
+                        }</p>
+                    </div>
+                    <div class="book-actions">
+                        <button onclick="borrowBook('${
+                          book.title
+                        }')">Borrow</button>
+                    </div>
+                `;
+          container.appendChild(card);
+        });
+      }
+
+      function borrowBook(title) {
+        alert(`Borrowing: ${title}`);
+        // Implement actual borrowing logic
+      }
+    </script>
+  </body>
+</html>
