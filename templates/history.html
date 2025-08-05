@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Borrowed Books History</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        #fees {
+            margin-top: 20px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Borrowed Books History</h1>
+
+    <table id="historyTable">
+        <thead>
+            <tr>
+                <th>Serial Number</th>
+                <th>Book ID</th>
+                <th>Book Title</th>
+                <th>Borrow Date</th>
+                <th>Return Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- History rows will be inserted here -->
+        </tbody>
+    </table>
+
+    <div id="fees">Total Fees: Loading...</div>
+
+    <script>
+        async function fetchHistory() {
+            const response = await fetch('/api/history/borrow');
+            const history = await response.json();
+            const tbody = document.querySelector('#historyTable tbody');
+            tbody.innerHTML = '';
+            history.forEach(record => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${record.serial_number}</td>
+                    <td>${record.book_id}</td>
+                    <td>${record.book_title}</td>
+                    <td>${record.borrow_date || ''}</td>
+                    <td>${record.return_date || ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function fetchFees() {
+            const response = await fetch('/api/history/fees');
+            const fees = await response.json();
+            document.getElementById('fees').textContent = `Total Fees: ${fees.total_fees}`;
+        }
+
+        fetchHistory();
+        fetchFees();
+    </script>
+</body>
+</html>

@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Student Login - Library Management System</title>
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='styles.css') }}"
+    />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='student.css') }}"
+    />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" />
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <h1>Welcome to Library Management System</h1>
+        <p class="subtitle">Your Gateway to Knowledge</p>
+      </header>
+
+      <div class="process-flow">
+        <div class="flow-step active">
+          <span class="step-number">1</span>
+          <span class="step-text">Student Login</span>
+        </div>
+        <div class="arrow">→</div>
+        <div class="flow-step">
+          <span class="step-number">2</span>
+          <span class="step-text">Student Dashboard</span>
+        </div>
+      </div>
+
+      <div class="login-container">
+        <h2>Student Login</h2>
+        <form
+          id="studentLoginForm"
+          method="POST"
+          action="/api/student_login/login"
+        >
+          <div class="form-group">
+            <label for="username">Username or Email</label>
+            <input
+              type="text"
+              id="username"
+              name="username"
+              required
+              placeholder="Enter your username or email"
+            />
+          </div>
+
+          <div class="form-group">
+            <label for="password">Password</label>
+            <input
+              type="password"
+              id="password"
+              name="password"
+              required
+              placeholder="Enter your password"
+            />
+          </div>
+
+          <button type="submit" class="login-btn">Login</button>
+
+          <div class="links">
+            <a href="/api/student_login/signup"
+              >Don't have an account? Sign up</a
+            >
+            <a href="/api/student_login/reset_password">Forgot password?</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="features-preview">
+        <h3>Available Features After Login</h3>
+        <div class="feature-buttons">
+          <button class="feature-btn" onclick="showFeature('get-book')">
+            📚 Get Book
+          </button>
+          <button class="feature-btn" onclick="showFeature('submit-book')">
+            📤 Submit Book
+          </button>
+          <button class="feature-btn" onclick="showFeature('borrow-book')">
+            🔄 Borrow Book
+          </button>
+          <button class="feature-btn" onclick="showFeature('history')">
+            📊 History
+          </button>
+          <button class="feature-btn" onclick="showFeature('fine-calc')">
+            💰 Fine Calculation
+          </button>
+          <button class="feature-btn" onclick="showFeature('recommend')">
+            🎯 Recommend Books
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showFeature(feature) {
+        alert(`Feature "${feature}" will be available after login!`);
+      }
+
+      document
+        .getElementById("studentLoginForm")
+        .addEventListener("submit", async (e) => {
+          e.preventDefault();
+          const formData = new FormData(e.target);
+          const response = await fetch("/api/student_login/login", {
+            method: "POST",
+            body: formData,
+          });
+
+          if (response.ok) {
+            window.location.href = "/student-dashboard";
+          } else {
+            alert("Login failed. Please check your credentials.");
+          }
+        });
+    </script>
+  </body>
+</html>

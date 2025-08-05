@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Dataset Management</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        form {
+            margin-bottom: 30px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            max-width: 500px;
+        }
+        label {
+            display: block;
+            margin-top: 10px;
+        }
+        input {
+            width: 100%;
+            padding: 6px;
+            margin-top: 5px;
+            box-sizing: border-box;
+        }
+        button {
+            margin-top: 15px;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+        .message {
+            margin-top: 10px;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Dataset Management</h1>
+
+    <form id="addBookForm">
+        <h2>Add Book Dataset</h2>
+        <label for="bookTitle">Title</label>
+        <input type="text" id="bookTitle" required />
+        <label for="bookAuthor">Author</label>
+        <input type="text" id="bookAuthor" required />
+        <label for="bookISBN">ISBN</label>
+        <input type="text" id="bookISBN" required />
+        <label for="bookCopies">Copies</label>
+        <input type="number" id="bookCopies" min="1" required />
+        <button type="submit">Add Book</button>
+        <div id="bookMessage" class="message"></div>
+    </form>
+
+    <form id="addUserForm">
+        <h2>Add User Dataset</h2>
+        <label for="userFullname">Full Name</label>
+        <input type="text" id="userFullname" required />
+        <label for="userEmail">Email</label>
+        <input type="email" id="userEmail" required />
+        <label for="userUsername">Username</label>
+        <input type="text" id="userUsername" required />
+        <label for="userPassword">Password</label>
+        <input type="password" id="userPassword" required />
+        <button type="submit">Add User</button>
+        <div id="userMessage" class="message"></div>
+    </form>
+
+    <script>
+        document.getElementById('addBookForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const title = document.getElementById('bookTitle').value;
+            const author = document.getElementById('bookAuthor').value;
+            const isbn = document.getElementById('bookISBN').value;
+            const copies = parseInt(document.getElementById('bookCopies').value, 10);
+
+            const response = await fetch('/api/dataset_management/add_book', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({title, author, isbn, copies})
+            });
+            const data = await response.json();
+            document.getElementById('bookMessage').textContent = data.message || 'Book added';
+            e.target.reset();
+        });
+
+        document.getElementById('addUserForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const fullname = document.getElementById('userFullname').value;
+            const email = document.getElementById('userEmail').value;
+            const username = document.getElementById('userUsername').value;
+            const password = document.getElementById('userPassword').value;
+
+            const response = await fetch('/api/dataset_management/add_user', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({fullname, email, username, password})
+            });
+            const data = await response.json();
+            document.getElementById('userMessage').textContent = data.message || 'User added';
+            e.target.reset();
+        });
+    </script>
+</body>
+</html>

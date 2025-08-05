@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Book Inventory</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 20px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+        button {
+            padding: 6px 12px;
+            margin-right: 5px;
+            cursor: pointer;
+        }
+        #addBookForm {
+            margin-bottom: 20px;
+        }
+        #addBookForm input {
+            padding: 6px;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Book Inventory</h1>
+
+    <form id="addBookForm">
+        <input type="text" id="title" placeholder="Title" required />
+        <input type="text" id="author" placeholder="Author" required />
+        <input type="text" id="isbn" placeholder="ISBN" required />
+        <input type="number" id="copies" placeholder="Copies" min="1" required />
+        <button type="submit">Add Book</button>
+    </form>
+
+    <table id="booksTable">
+        <thead>
+            <tr>
+                <th>Title</th>
+                <th>Author</th>
+                <th>ISBN</th>
+                <th>Copies</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Book rows will be inserted here -->
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchBooks() {
+            const response = await fetch('/book_management/books');
+            const books = await response.json();
+            const tbody = document.querySelector('#booksTable tbody');
+            tbody.innerHTML = '';
+            books.forEach(book => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${book.title}</td>
+                    <td>${book.author}</td>
+                    <td>${book.isbn}</td>
+                    <td>${book.copies}</td>
+                    <td>
+                        <button onclick="editBook(${book.id})">Edit</button>
+                        <button onclick="deleteBook(${book.id})">Delete</button>
+                    </td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function addBook(event) {
+            event.preventDefault();
+            const title = document.getElementById('title').value;
+            const author = document.getElementById('author').value;
+            const isbn = document.getElementById('isbn').value;
+            const copies = parseInt(document.getElementById('copies').value);
+
+            const response = await fetch('/book_management/books', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({title, author, isbn, copies})
+            });
+
+            if (response.ok) {
+                document.getElementById('addBookForm').reset();
+                fetchBooks();
+            } else {
+                alert('Failed to add book');
+            }
+        }
+
+        async function deleteBook(bookId) {
+            if (!confirm('Are you sure you want to delete this book?')) return;
+            const response = await fetch(`/book_management/books/${bookId}`, {
+                method: 'DELETE'
+            });
+            if (response.ok) {
+                fetchBooks();
+            } else {
+                alert('Failed to delete book');
+            }
+        }
+
+        function editBook(bookId) {
+            const tr = event.target.closest('tr');
+            const title = tr.children[0].textContent;
+            const author = tr.children[1].textContent;
+            const isbn = tr.children[2].textContent;
+            const copies = tr.children[3].textContent;
+
+            const newTitle = prompt('Edit Title:', title);
+            if (newTitle === null) return;
+            const newAuthor = prompt('Edit Author:', author);
+            if (newAuthor === null) return;
+            const newIsbn = prompt('Edit ISBN:', isbn);
+            if (newIsbn === null) return;
+            const newCopies = prompt('Edit Copies:', copies);
+            if (newCopies === null) return;
+
+            updateBook(bookId, newTitle, newAuthor, newIsbn, parseInt(newCopies));
+        }
+
+        async function updateBook(bookId, title, author, isbn, copies) {
+            const response = await fetch(`/book_management/books/${bookId}`, {
+                method: 'PUT',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({title, author, isbn, copies})
+            });
+            if (response.ok) {
+                fetchBooks();
+            } else {
+                alert('Failed to update book');
+            }
+        }
+
+        document.getElementById('addBookForm').addEventListener('submit', addBook);
+
+        fetchBooks();
+    </script>
+</body>
+</html>

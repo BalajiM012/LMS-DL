@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Student Portal</title>
+    <link rel="stylesheet" href="/student_portal.css" />
+</head>
+<body>
+    <h1>Welcome, Student!</h1>
+    <div class="top-buttons">
+        <button onclick="location.href='{{ student_base_url }}/home'">Home</button>
+        <button onclick="location.href='{{ student_base_url }}/logout'">Logout</button>
+    </div>
+    <div>
+        <input type="text" id="searchInput" placeholder="Search by Book ID or Borrow ID" />
+        <button onclick="performSearch()">Search</button>
+    </div>
+    <div id="searchResults" class="search-results"></div>
+    <div id="recommendations" style="margin-top: 40px; text-align: left;">
+        <h2>Book Recommendations</h2>
+        <div id="collaborative_recommendations">
+            <h3>Similar Books</h3>
+            <ul id="collaborative_list"></ul>
+        </div>
+        <div id="content_based_recommendations">
+            <h3>Related Books</h3>
+            <ul id="content_based_list"></ul>
+        </div>
+        <div id="hybrid_recommendations">
+            <h3>Both</h3>
+            <ul id="hybrid_list"></ul>
+        </div>
+    </div>
+    <div class="feature-buttons">
+        <button onclick="location.href='/api/student/get_book'">Get Book</button>
+        <button onclick="location.href='{{ student_base_url }}/dataset_management'">Submit Book</button>
+        <button onclick="location.href='{{ student_base_url }}/borrow_book'">Borrow Book</button>
+        <button onclick="location.href='{{ student_base_url }}/history'">History</button>
+        <button onclick="location.href='{{ student_base_url }}/due_date_fine_tracking/'">Fine Calculation</button>
+        <button onclick="location.href='{{ student_base_url }}/book_recommendation/'">Recommend Books</button>
+    </div>
+    <script>
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '';
+            if (!query) {
+                resultsDiv.innerHTML = '<p>Please enter a search query.</p>';
+                return;
+            }
+            try {
+                const response = await fetch(`/student_portal/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                if (data.results.length === 0) {
+                    resultsDiv.innerHTML = '<p>No results found.</p>';
+                    return;
+                }
+                let html = '<table border="1" cellpadding="5" cellspacing="0"><tr><th>Borrow ID</th><th>Book ID</th><th>Due Date</th><th>Return Date</th><th>Fine</th></tr>';
+                data.results.forEach(r => {
+                    html += `<tr>
+                        <td>${r.borrow_id}</td>
+                        <td>${r.book_id}</td>
+                        <td>${r.due_date || ''}</td>
+                        <td>${r.return_date || ''}</td>
+                        <td>${r.fine}</td>
+                    </tr>`;
+                });
+                html += '</table>';
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = '<p>Error fetching search results.</p>';
+            }
+        }
+
+        async function loadRecommendations() {
+            try {
+                const response = await fetch('/student_portal/recommendations');
+                const data = await response.json();
+
+                function renderList(id, items) {
+                    const ul = document.getElementById(id);
+                    ul.innerHTML = '';
+                    if (items.length === 0) {
+                        ul.innerHTML = '<li>No recommendations available.</li>';
+                        return;
+                    }
+                    items.forEach(item => {
+                        const li = document.createElement('li');
+                        li.textContent = `${item.title} by ${item.author}`;
+                        ul.appendChild(li);
+                    });
+                }
+
+                renderList('collaborative_list', data.collaborative);
+                renderList('content_based_list', data.content_based);
+                renderList('hybrid_list', data.hybrid);
+            } catch (error) {
+                console.error('Error loading recommendations:', error);
+            }
+        }
+
+        window.onload = function() {
+            loadRecommendations();
+        };
+    </script>
+</body>
+</html>

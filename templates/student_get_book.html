@@ -1,0 +1,92 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Get Book</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        #searchInput {
+            padding: 10px;
+            width: 300px;
+            font-size: 16px;
+        }
+        #searchButton {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        #booksTable {
+            margin-top: 20px;
+            border-collapse: collapse;
+            width: 80%;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        #booksTable th, #booksTable td {
+            border: 1px solid #ddd;
+            padding: 8px;
+        }
+        #booksTable th {
+            background-color: #007bff;
+            color: white;
+        }
+    </style>
+</head>
+<body>
+    <h1>Get Book</h1>
+    <input type="text" id="searchInput" placeholder="Search by title or author" />
+    <button id="searchButton" onclick="fetchBooks()">Search</button>
+    <table id="booksTable" style="display:none;">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Title</th>
+                <th>Author</th>
+            </tr>
+        </thead>
+        <tbody id="booksTableBody"></tbody>
+    </table>
+    <script>
+        async function fetchBooks() {
+            const query = document.getElementById('searchInput').value.trim();
+            const table = document.getElementById('booksTable');
+            const tbody = document.getElementById('booksTableBody');
+            tbody.innerHTML = '';
+            if (!query) {
+                alert('Please enter a search query.');
+                return;
+            }
+            try {
+                const response = await fetch(`/api/student/get_books?q=${encodeURIComponent(query)}`);
+                const books = await response.json();
+                if (books.length === 0) {
+                    alert('No books found.');
+                    table.style.display = 'none';
+                    return;
+                }
+                books.forEach(book => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${book.id}</td>
+                        <td>${book.title}</td>
+                        <td>${book.author}</td>
+                    `;
+                    tbody.appendChild(row);
+                });
+                table.style.display = 'table';
+            } catch (error) {
+                alert('Error fetching books.');
+                table.style.display = 'none';
+            }
+        }
+    </script>
+</body>
+</html>

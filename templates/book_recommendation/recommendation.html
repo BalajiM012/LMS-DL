@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Book Recommendations</title>
+    <link rel="stylesheet" href="/public/recommendation.css" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        .recommendation-buttons {
+            margin-bottom: 20px;
+        }
+        .recommendation-buttons button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border: none;
+            background-color: #007bff;
+            color: white;
+            border-radius: 5px;
+        }
+        .recommendation-list {
+            list-style-type: none;
+            padding: 0;
+            max-width: 600px;
+            margin: 0 auto;
+            text-align: left;
+        }
+        .recommendation-list li {
+            padding: 8px 12px;
+            border-bottom: 1px solid #ddd;
+        }
+    </style>
+</head>
+<body>
+    <h1>Book Recommendations</h1>
+    <div class="recommendation-buttons">
+        <button id="btn-collaborative">Collaborative Filtering</button>
+        <button id="btn-content-based">Content-Based Filtering</button>
+        <button id="btn-hybrid">Hybrid</button>
+    </div>
+    <ul id="recommendation-list" class="recommendation-list">
+        <!-- Recommendations will be loaded here -->
+    </ul>
+    <script>
+        async function fetchRecommendations(type) {
+            const response = await fetch(`/book_recommendation/${type}`);
+            if (!response.ok) {
+                alert('Failed to fetch recommendations');
+                return [];
+            }
+            const data = await response.json();
+            return data.recommendations || [];
+        }
+
+        function renderRecommendations(recommendations) {
+            const list = document.getElementById('recommendation-list');
+            list.innerHTML = '';
+            if (recommendations.length === 0) {
+                list.innerHTML = '<li>No recommendations available.</li>';
+                return;
+            }
+            recommendations.forEach(rec => {
+                const li = document.createElement('li');
+                li.textContent = `${rec.title} by ${rec.author}`;
+                list.appendChild(li);
+            });
+        }
+
+        document.getElementById('btn-collaborative').addEventListener('click', async () => {
+            const recs = await fetchRecommendations('collaborative');
+            renderRecommendations(recs);
+        });
+
+        document.getElementById('btn-content-based').addEventListener('click', async () => {
+            const recs = await fetchRecommendations('content_based');
+            renderRecommendations(recs);
+        });
+
+        document.getElementById('btn-hybrid').addEventListener('click', async () => {
+            const recs = await fetchRecommendations('hybrid');
+            renderRecommendations(recs);
+        });
+
+        // Load content-based recommendations by default on page load
+        window.onload = async () => {
+            const recs = await fetchRecommendations('content_based');
+            renderRecommendations(recs);
+        };
+    </script>
+</body>
+</html>

@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+            text-align: center;
+        }
+        header {
+            font-size: 2rem;
+            font-weight: bold;
+            margin-bottom: 20px;
+        }
+        nav {
+            margin-bottom: 30px;
+        }
+        nav button {
+            margin: 0 10px;
+            padding: 10px 20px;
+            font-size: 1rem;
+            cursor: pointer;
+        }
+        .features {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .feature-card {
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            padding: 20px;
+            width: 180px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .feature-card button {
+            margin-top: 10px;
+            padding: 8px 12px;
+            font-size: 1rem;
+            cursor: pointer;
+            width: 100%;
+        }
+    </style>
+</head>
+<body>
+    <header>Welcome Admin</header>
+    <nav>
+        <button onclick="location.href='/'">Home</button>
+        <button onclick="location.href='/logout'">Logout</button>
+    </nav>
+    <div>
+        <input type="text" id="searchInput" placeholder="Search by User ID or Book ID" />
+        <button onclick="performSearch()">Search</button>
+    </div>
+    <div id="searchResults" class="search-results"></div>
+    <div class="features">
+        <div class="feature-card">
+            <div>Book Inventory</div>
+            <button onclick="location.href='{{ admin_base_url }}/book_management/book_inventory'">Open</button>
+        </div>
+        <div class="feature-card">
+            <div>Demand Forecast</div>
+            <button onclick="location.href='{{ admin_base_url }}/demand_forecast/dashboard'">Open</button>
+        </div>
+        <div class="feature-card">
+            <div>Fine Calculation</div>
+            <button onclick="location.href='{{ admin_base_url }}/automated_fine_calculation'">Open</button>
+        </div>
+        <div class="feature-card">
+            <div>Manage Users</div>
+            <button onclick="location.href='{{ admin_base_url }}/manage_users'">Open</button>
+        </div>
+        <div class="feature-card">
+            <div>Borrowed Books History</div>
+            <button onclick="location.href='{{ admin_base_url }}/history'">Open</button>
+        </div>
+        <div class="feature-card">
+            <div>Due Date Fine Tracking</div>
+            <button onclick="location.href='{{ admin_base_url }}/due_date_fine_tracking'">Open</button>
+        </div>
+        <div class="feature-card">
+            <div>Dataset Management</div>
+            <button onclick="location.href='{{ admin_base_url }}/dataset_management/view'">Open</button>
+        </div>
+    </div>
+    <script>
+        async function performSearch() {
+            const query = document.getElementById('searchInput').value.trim();
+            const resultsDiv = document.getElementById('searchResults');
+            resultsDiv.innerHTML = '';
+            if (!query) {
+                resultsDiv.innerHTML = '<p>Please enter a search query.</p>';
+                return;
+            }
+            try {
+                const response = await fetch(`/api/dashboard/search?q=${encodeURIComponent(query)}`);
+                const data = await response.json();
+                if (data.results.length === 0) {
+                    resultsDiv.innerHTML = '<p>No results found.</p>';
+                    return;
+                }
+                let html = '<table border="1" cellpadding="5" cellspacing="0"><tr><th>Borrow ID</th><th>User ID</th><th>Book ID</th><th>Due Date</th><th>Return Date</th><th>Fine</th></tr>';
+                data.results.forEach(r => {
+                    html += `<tr>
+                        <td>${r.borrow_id}</td>
+                        <td>${r.user_id}</td>
+                        <td>${r.book_id}</td>
+                        <td>${r.due_date || ''}</td>
+                        <td>${r.return_date || ''}</td>
+                        <td>${r.fine}</td>
+                    </tr>`;
+                });
+                html += '</table>';
+                resultsDiv.innerHTML = html;
+            } catch (error) {
+                resultsDiv.innerHTML = '<p>Error fetching search results.</p>';
+            }
+        }
+    </script>
+</body>
+</html>

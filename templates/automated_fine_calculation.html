@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Automated Fine Calculation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        h1 {
+            margin-bottom: 20px;
+        }
+        button {
+            padding: 8px 16px;
+            margin-bottom: 20px;
+            cursor: pointer;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Automated Fine Calculation</h1>
+    <button id="calculateFinesBtn">Calculate Fines</button>
+    <div id="message"></div>
+    <table id="finesTable">
+        <thead>
+            <tr>
+                <th>Borrow ID</th>
+                <th>User ID</th>
+                <th>Book ID</th>
+                <th>Fine</th>
+                <th>Due Date</th>
+                <th>Return Date</th>
+            </tr>
+        </thead>
+        <tbody>
+            <!-- Fines data will be populated here -->
+        </tbody>
+    </table>
+
+    <script>
+        async function fetchFines() {
+            const response = await fetch('/api/automated_fine_calculation/fines');
+            const fines = await response.json();
+            const tbody = document.querySelector('#finesTable tbody');
+            tbody.innerHTML = '';
+            fines.forEach(fine => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${fine.borrow_id}</td>
+                    <td>${fine.user_id}</td>
+                    <td>${fine.book_id}</td>
+                    <td>${fine.fine.toFixed(2)}</td>
+                    <td>${fine.due_date || ''}</td>
+                    <td>${fine.return_date || ''}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        async function calculateFines() {
+            const response = await fetch('/api/automated_fine_calculation/calculate_fines', {
+                method: 'POST'
+            });
+            const result = await response.json();
+            document.getElementById('message').textContent = result.message;
+            fetchFines();
+        }
+
+        document.getElementById('calculateFinesBtn').addEventListener('click', calculateFines);
+
+        fetchFines();
+    </script>
+</body>
+</html>

@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Student Books</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 2rem;
+            background-color: #f9f9f9;
+        }
+        .dashboard {
+            max-width: 600px;
+            margin: auto;
+            background: white;
+            padding: 2rem;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        h1 {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+        button {
+            padding: 1rem;
+            font-size: 1rem;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            background-color: #007bff;
+            color: white;
+            transition: background-color 0.3s ease;
+        }
+        button:hover {
+            background-color: #0056b3;
+        }
+        #output {
+            margin-top: 2rem;
+            white-space: pre-wrap;
+            background: #eee;
+            padding: 1rem;
+            border-radius: 5px;
+            height: 200px;
+            overflow-y: auto;
+            font-family: monospace;
+        }
+    </style>
+</head>
+<body>
+    <div class="dashboard" style="text-align: center;">
+        <h1>Welcome, Student!</h1>
+        <nav style="margin-bottom: 1rem;">
+            <button id="btnHome" style="margin: 0 10px;">Home</button>
+            <button id="btnLogout" style="margin: 0 10px;">Logout</button>
+        </nav>
+        <div style="margin-bottom: 1rem;">
+            <input type="text" id="searchInput" placeholder="Search by Title or Author" />
+            <button id="btnSearchBooks">Search</button>
+        </div>
+        <div class="buttons" style="display: flex; justify-content: center; gap: 1rem; flex-wrap: wrap;">
+            <button id="btnGetBooks">Get Book</button>
+            <button id="btnSubmitBook">Submit Book</button>
+            <button id="btnBorrowBook">Borrow Book</button>
+            <button id="btnHistory">History</button>
+            <button id="btnFineCalculator">Fine Calculation</button>
+            <button id="btnRecommendBooks">Recommend Books</button>
+        </div>
+    <div id="output"></div>
+    </div>
+    <script>
+        document.getElementById('btnGetBooks').addEventListener('click', () => {
+            window.location.href = '/student_get_book.html';
+        });
+    </script>
+    <div id="output"></div>
+    </div>
+    <script>
+        document.getElementById('btnRecommendBooks').addEventListener('click', () => {
+            window.location.href = '/api/book_recommendation/dashboard';
+        });
+    </script>
+    <script>
+        document.getElementById('btnFineCalculator').addEventListener('click', () => {
+            window.location.href = '/due_date_fine_tracking/view';
+        });
+    </script>
+    <script>
+        const output = document.getElementById('output');
+
+        async function fetchGetBooks(query = '') {
+            let url = '/api/student/get_books';
+            if (query) {
+                url += `?q=${encodeURIComponent(query)}`;
+            }
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.length === 0) {
+                output.textContent = 'No books found.';
+                return;
+            }
+            let html = '<table border="1" cellpadding="5" cellspacing="0"><tr><th>ID</th><th>Title</th><th>Author</th></tr>';
+            data.forEach(book => {
+                html += `<tr><td>${book.id}</td><td>${book.title}</td><td>${book.author}</td></tr>`;
+            });
+            html += '</table>';
+            output.innerHTML = html;
+        }
+
+        document.getElementById('btnGetBooks').addEventListener('click', () => fetchGetBooks());
+        document.getElementById('btnSearchBooks').addEventListener('click', () => {
+            const query = document.getElementById('searchInput').value.trim();
+            fetchGetBooks(query);
+        });
+
+        // Initial load of all books
+        fetchGetBooks();
+
+        async function fetchSubmitBook() {
+            // For demo, submitting book with id 1
+            const res = await fetch('/api/student/submit_book', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({book_id: 1})
+            });
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchBorrowBook() {
+            // For demo, borrowing book with id 1 and user_id 1
+            const res = await fetch('/api/student/borrow_book', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({book_id: 1, user_id: 1})
+            });
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchBorrowedBooksHistory() {
+            const res = await fetch('/api/student/borrowed_books_history');
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchFineCalculator() {
+            const res = await fetch('/api/student/fine_calculator');
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchHistory() {
+            const res = await fetch('/api/history'); // Assuming this endpoint exists
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchRecommendBooks() {
+            const res = await fetch('/api/student/recommend_books');
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        document.getElementById('btnSubmitBook').addEventListener('click', fetchSubmitBook);
+        document.getElementById('btnBorrowBook').addEventListener('click', fetchBorrowBook);
+        document.getElementById('btnBorrowedBooksHistory').addEventListener('click', fetchBorrowedBooksHistory);
+        document.getElementById('btnFineCalculator').addEventListener('click', fetchFineCalculator);
+        document.getElementById('btnRecommendBooks').addEventListener('click', fetchRecommendBooks);
+
+        document.getElementById('btnHome').addEventListener('click', () => {
+            window.location.href = '/student.html';
+        });
+
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            window.location.href = '/logout'; // Adjust logout URL as needed
+        });
+    </script>
+
+    <script>
+        const output = document.getElementById('output');
+
+        async function fetchGetBooks(query = '') {
+            let url = '/api/student/get_books';
+            if (query) {
+                url += `?q=${encodeURIComponent(query)}`;
+            }
+            const res = await fetch(url);
+            const data = await res.json();
+            if (data.length === 0) {
+                output.textContent = 'No books found.';
+                return;
+            }
+            let html = '<table border="1" cellpadding="5" cellspacing="0"><tr><th>ID</th><th>Title</th><th>Author</th></tr>';
+            data.forEach(book => {
+                html += `<tr><td>${book.id}</td><td>${book.title}</td><td>${book.author}</td></tr>`;
+            });
+            html += '</table>';
+            output.innerHTML = html;
+        }
+
+        document.getElementById('btnGetBooks').addEventListener('click', () => fetchGetBooks());
+        document.getElementById('btnSearchBooks').addEventListener('click', () => {
+            const query = document.getElementById('searchInput').value.trim();
+            fetchGetBooks(query);
+        });
+
+        // Initial load of all books
+        fetchGetBooks();
+
+        async function fetchSubmitBook() {
+            // For demo, submitting book with id 1
+            const res = await fetch('/api/student/submit_book', {
+                method: 'POST',
+                headers: {'Content-Type': 'application/json'},
+                body: JSON.stringify({book_id: 1})
+            });
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchBorrowedBooksHistory() {
+            const res = await fetch('/api/student/borrowed_books_history');
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchFineCalculator() {
+            const res = await fetch('/api/student/fine_calculator');
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchHistory() {
+            const res = await fetch('/api/history'); // Assuming this endpoint exists
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        async function fetchRecommendBooks() {
+            const res = await fetch('/api/student/recommend_books');
+            const data = await res.json();
+            output.textContent = JSON.stringify(data, null, 2);
+        }
+
+        document.getElementById('btnSubmitBook').addEventListener('click', fetchSubmitBook);
+        document.getElementById('btnBorrowedBooksHistory').addEventListener('click', fetchBorrowedBooksHistory);
+        document.getElementById('btnFineCalculator').addEventListener('click', fetchFineCalculator);
+        document.getElementById('btnRecommendBooks').addEventListener('click', fetchRecommendBooks);
+
+        document.getElementById('btnHome').addEventListener('click', () => {
+            window.location.href = '/student.html';
+        });
+
+        document.getElementById('btnLogout').addEventListener('click', () => {
+            window.location.href = '/logout'; // Adjust logout URL as needed
+        });
+    </script>
+</body>
+</html>

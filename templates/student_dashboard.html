@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Dashboard - Library Management System</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+    <link rel="stylesheet" href="{{ url_for('static', filename='student.css') }}">
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}">
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Welcome to Library Management System</h1>
+            <p class="subtitle">Student Dashboard</p>
+        </header>
+
+        <div class="process-flow">
+            <div class="flow-step completed">
+                <span class="step-number">✓</span>
+                <span class="step-text">Student Login</span>
+            </div>
+            <div class="arrow">→</div>
+            <div class="flow-step active">
+                <span class="step-number">2</span>
+                <span class="step-text">Student Dashboard</span>
+            </div>
+        </div>
+
+        <div class="dashboard-container">
+            <div class="dashboard-header">
+                <h2>Student Dashboard</h2>
+                <button onclick="logout()" class="logout-btn">Logout</button>
+            </div>
+
+            <div class="search-container">
+                <input type="text" id="searchInput" placeholder="Search books by title, author, or ISBN..." onkeyup="searchBooks()">
+            </div>
+
+            <div class="dashboard-grid">
+                <div class="dashboard-card">
+                    <h4>📚 Get Book</h4>
+                    <p>Browse and find available books</p>
+                    <button onclick="navigateTo('get-book')">Get Book</button>
+                </div>
+
+                <div class="dashboard-card">
+                    <h4>📤 Submit Book</h4>
+                    <p>Return borrowed books</p>
+                    <button onclick="navigateTo('submit-book')">Submit Book</button>
+                </div>
+
+                <div class="dashboard-card">
+                    <h4>🔄 Borrow Book</h4>
+                    <p>Borrow new books from library</p>
+                    <button onclick="navigateTo('borrow-book')">Borrow Book</button>
+                </div>
+
+                <div class="dashboard-card">
+                    <h4>📊 History</h4>
+                    <p>View your borrowing history</p>
+                    <button onclick="navigateTo('history')">View History</button>
+                </div>
+
+                <div class="dashboard-card">
+                    <h4>💰 Fine Calculation</h4>
+                    <p>Check and pay fines</p>
+                    <button onclick="navigateTo('fine-calc')">Calculate Fines</button>
+                </div>
+
+                <div class="dashboard-card">
+                    <h4>🎯 Recommend Books</h4>
+                    <p>Get personalized recommendations</p>
+                    <button onclick="navigateTo('recommend')">Get Recommendations</button>
+                </div>
+            </div>
+
+            <div id="searchResults" class="search-results" style="display: none;">
+                <h3>Search Results</h3>
+                <div id="resultsContainer"></div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Check if user is logged in
+        if (!localStorage.getItem('studentToken')) {
+            window.location.href = '/api/student_login/login';
+        }
+
+        function logout() {
+            localStorage.removeItem('studentToken');
+            window.location.href = '/api/student_login/login';
+        }
+
+        function navigateTo(feature) {
+            switch(feature) {
+                case 'get-book':
+                    window.location.href = '/student/get-book';
+                    break;
+                case 'submit-book':
+                    window.location.href = '/student/submit-book';
+                    break;
+                case 'borrow-book':
+                    window.location.href = '/student/borrow-book';
+                    break;
+                case 'history':
+                    window.location.href = '/student/history';
+                    break;
+                case 'fine-calc':
+                    window.location.href = '/student/fine-calculation';
+                    break;
+                case 'recommend':
+                    window.location.href = '/student/recommendations';
+                    break;
+            }
+        }
+
+        function searchBooks() {
+            const searchTerm = document.getElementById('searchInput').value;
+            if (searchTerm.length < 2) {
+                document.getElementById('searchResults').style.display = 'none';
+                return;
+            }
+
+            // Simulate search functionality
+            fetch(`/api/books/search?q=${searchTerm}`)
+                .then(response => response.json())
+                .then(data => {
+                    displaySearchResults(data.books || []);
+                })
+                .catch(error => {
+                    console.error('Search error:', error);
+                });
+        }
+
+        function displaySearchResults(books) {
+            const container = document.getElementById('resultsContainer');
+            const resultsDiv = document.getElementById('searchResults');
+            
+            if (books.length === 0) {
+                container.innerHTML = '<p>No books found.</p>';
+            } else {
+                container.innerHTML = books.map(book => `
+                    <div class="book-item">
+                        <h5>${book.title}</h5>
+                        <p>Author: ${book.author}</p>
+                        <p>Available: ${book.available_quantity}/${book.total_quantity}</p>
+                        <button onclick="borrowBook(${book.id})">Borrow</button>
+                    </div>
+                `).join('');
+            }
+            
+            resultsDiv.style.display = 'block';
+        }
+
+        function borrowBook(bookId) {
+            fetch('/api/student/borrow', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('studentToken')}`
+                },
+                body: JSON.stringify({ book_id: bookId })
+            })
