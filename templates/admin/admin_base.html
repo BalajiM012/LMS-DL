@@ -1,0 +1,29 @@
+<!-- Admin Base Template -->
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>LMS Admin</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="{{ url_for('static', filename='admin/book_inventory.css') }}"
+    />
+  </head>
+  <body>
+    <div class="admin-header">
+      <h1>LMS Website Administration</h1>
+      <nav>
+        <ul>
+          <li><a href="/admin/dashboard">Dashboard</a></li>
+          <li><a href="/admin/books">Book Inventory</a></li>
+          <li><a href="/admin/users">User Management</a></li>
+          <li><a href="/logout">Logout</a></li>
+        </ul>
+      </nav>
+    </div>
+
+    <div class="admin-content">
+      <block name="content"></block>
+    </div>
+  </body>
+</html>

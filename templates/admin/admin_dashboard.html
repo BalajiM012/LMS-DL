@@ -1,0 +1,37 @@
+<!-- Admin Dashboard Template -->
+<extends "admin_base.html">
+
+<block name="content">
+  <div class="dashboard-container">
+    <h1>Welcome to LMS Website</h1>
+    <div class="admin-info">
+      <p>Current Admin: {{ current_user.username }}</p>
+    </div>
+
+    <div class="nav-buttons">
+      <a href="/" class="btn btn-home">Home</a>
+      <a href="/logout" class="btn btn-logout">Logout</a>
+    </div>
+
+    <div class="features-section">
+      <h2>Admin Features</h2>
+      <div class="feature-buttons">
+        <a href="/admin/books" class="btn btn-feature">Book Inventory</a>
+        <a href="/admin/users" class="btn btn-feature">User Management</a>
+        <a href="/admin/fines" class="btn btn-feature">Fines Management</a>
+        <a href="/admin/reports" class="btn btn-feature">Generate Reports</a>
+      </div>
+
+      <form class="search-form">
+        <input
+          type="text"
+          id="search-input"
+          placeholder="Search books, users, or fines..."
+        />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='admin/book_inventory.js') }}"></script>
+</block>

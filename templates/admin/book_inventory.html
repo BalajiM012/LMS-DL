@@ -1,0 +1,47 @@
+<!-- Admin Book Inventory Template -->
+<extends "admin_base.html">
+
+<block name="title">Book Inventory</block>
+
+<block name="content">
+  <div class="inventory-container">
+    <h1>Welcome to LMS Website</h1>
+    <div class="admin-username">Current Admin: {{ current_user.username }}</div>
+
+    <div class="nav-buttons">
+      <a href="/" class="btn btn-home">Home</a>
+      <a href="/logout" class="btn btn-logout">Logout</a>
+    </div>
+
+    <div class="inventory-header">
+      <h2>Book Inventory Management</h2>
+      <form class="search-form">
+        <input type="text" id="search-input" placeholder="Search books..." />
+        <button type="submit">Search</button>
+      </form>
+    </div>
+
+    <div class="inventory-grid">
+      <table id="books-table">
+        <thead>
+          <tr>
+            <th>Title</th>
+            <th>Author</th>
+            <th>ISBN</th>
+            <th>Available</th>
+            <th>Total</th>
+            <th>Actions</th>
+          </tr>
+
+          <tr></tr>
+        </thead>
+
+        <tbody>
+          <!-- Book rows will be populated by JavaScript -->
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='admin/book_inventory.js') }}"></script>
+</block>
