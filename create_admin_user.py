@@ -1,47 +1,24 @@
-from src.app_factory_minimal import db, create_app
-from src.models import User
+from app import db, User
 from werkzeug.security import generate_password_hash
 
-def create_users():
-    app = create_app()
-    
-    with app.app_context():
-        # Check if admin user already exists
-        existing_admin = User.query.filter_by(username="newadmin").first()
-        if not existing_admin:
-            # Create admin user
-            admin = User(
-                fullname="New Admin User",
-                username="newadmin",
-                email="newadmin@example.com",
-                password=generate_password_hash("newadminpassword", method='pbkdf2:sha256'),
-                role="admin"
-            )
-            db.session.add(admin)
-            print("Admin user created successfully.")
-        else:
-            print("Admin user already exists.")
-        
-        # Delete existing student user if it exists
-        existing_student = User.query.filter_by(username="newstudent").first()
-        if existing_student:
-            db.session.delete(existing_student)
-            db.session.commit()
-            print("Existing student user deleted.")
-        
-        # Create student user with correct password hash
-        student = User(
-            fullname="New Student User",
-            username="newstudent",
-            email="newstudent@example.com",
-            password=generate_password_hash("newstudentpassword", method='pbkdf2:sha256'),
-            role="student"
-        )
-        db.session.add(student)
+def create_admin():
+    admin = User(
+        fullname="New Admin User",
+        email="newadmin@example.com",
+        username="newadmin",
+        password=generate_password_hash("newadminpassword"),
+        role="admin"
+    )
+    # Remove existing admin with same username or email if any
+    existing_admin = User.query.filter((User.username == admin.username) | (User.email == admin.email)).first()
+    if existing_admin:
+        db.session.delete(existing_admin)
         db.session.commit()
-        print("Student user created successfully.")
-        
-        print("User creation process completed.")
+    db.session.add(admin)
+    db.session.commit()
+    print("New admin user created successfully.")
 
 if __name__ == "__main__":
-    create_users()
+    from app import app
+    with app.app_context():
+        create_admin()
